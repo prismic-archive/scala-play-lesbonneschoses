@@ -1,0 +1,50 @@
+@(title: String, id: String)(content: Html)
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title>Les bonnes choses – @title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/normalize.min.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+
+    <script src="@routes.Assets.at("javascripts/modernizr-2.6.2.min.js")"></script>
+  </head>
+  <body>
+
+    <header>
+      <nav>
+        <h1><a href="@routes.Application.index()">Les bonnes choses</a></h1>
+
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+        <ul>
+          <li><a href="#">Jobs</a></li>
+          <li><a href="#">Stores</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="main" id="@id">
+      @content
+    </div>
+
+    <footer>
+      This is a demonstration website for <a href="http://prismic.io">prismic.io</a>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/jquery-1.10.1.min.js")"><\/script>')</script>
+
+    <script src="@routes.Assets.at("javascripts/catslider.js")"></script>
+    <script src="@routes.Assets.at("javascripts/main.js")"></script>
+  </body>
+</html>
