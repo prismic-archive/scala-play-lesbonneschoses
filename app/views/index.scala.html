@@ -1,37 +1,31 @@
 @(products: Seq[com.zenexity.wroom.client.Document])
 
-@categories = @{ List("Macaron", "CupCake", "Pie") }
-
 @main(title = "Home", id = "home") {
 
   <section id="caroussel">
 
     <nav>
       <ul>
-        <li><a class="selected">Macarons</a></li>
-        <li><a>Cup Cakes</a></li>
-        <li><a>Little Pies</a></li>
+        @Application.CATEGORIES.values.map { category =>
+           <li><a>@category</a></li>
+        }
       </ul>
     </nav>
 
     <div class="products">
-    
-      @products.groupBy(_.tags.filter(categories.contains)).toList.sortBy(category => categories.indexOfSlice(category._1)).map {
-        case (tag, products) => {
-          <ul>
-            @products.take(5).map { product =>
-              <li data-category="@tag">
-                <a href="@routes.Application.product(product.id, product.slug)">
-                  @product.getImage("product.image").flatMap(_.getView("icon")).map { img =>
-                    <img src="@img.url">
-                  }
-                  <span>@product.getText("product.name").getOrElse("Missing product name")</span>
-                  <em>$3.95</em>
-                </a>
-              </li>
-            }
-          </ul>
-        }
+
+      @Application.CATEGORIES.keys.map { category =>
+        <ul>
+          @products.filter(_.tags.contains(category)).take(5).map { product =>
+            <li data-category="@category">
+              <a href="@routes.Application.product(product.id, product.slug)">
+                <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
+                <span>@product.getText("product.name").getOrElse("Product")</span>
+                <em>$3.95</em>
+              </a>
+            </li>
+          }
+        </ul>
       }
 
     </div>

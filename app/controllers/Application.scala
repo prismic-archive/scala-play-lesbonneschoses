@@ -10,24 +10,35 @@ object Application extends Controller {
 
   def SESSION = Wroom.url("http://lesbonneschoses.wroom.io/api").api()
 
+  val CATEGORIES = collection.immutable.ListMap(
+    "Macaron" -> "Macarons",
+    "Cupcake" -> "Cup Cakes",
+    "Pie" -> "Little Pies"
+  )
+
   def index = Action.async {
     for {
-      session  <- SESSION
-      products <- session.form("documents").q("""[[$d document.type ["product"]]]""").ref(session.master).submit()
-      featured <- session.form("documents").q("""[[$d document.tag ["Featured"]]]""").ref(session.master).submit()
+      session <- SESSION
+
+      (productsRequest, featuredRequest) = (
+        session.form("documents").q("""[[$d document.type ["product"]]]""").ref(session.master).submit(),
+        session.form("documents").q("""[[$d document.tag  ["Featured"]]]""").ref(session.master).submit()
+      )
+
+      products <- productsRequest
+      featured <- featuredRequest
     } yield {
-
-      println(products.headOption)
-
-      println(s"${products.size} products")
-      println(s"${featured.size} featured")
-
       Ok(views.html.index(products))
     }
   }
 
-  def products = Action {
-    Ok(views.html.products())
+  def products = Action.async {
+    for {
+      session <- SESSION
+      products <- session.form("documents").q("""[[$d document.type ["product"]]]""").ref(session.master).submit()
+    } yield {
+      Ok(views.html.products(products))
+    }
   }
 
   def product(id: String, slug: String) = Action {

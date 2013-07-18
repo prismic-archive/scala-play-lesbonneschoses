@@ -308,11 +308,12 @@ html.no-js #home #caroussel .products ul {
 .products ul li {
   display: inline-block;
   width: 200px;
+  height: 200px;
   text-align: center;
   padding: 40px 0;
   cursor: pointer;
   background: url(../images/shadow.png) no-repeat;
-  background-position: center 0px;
+  background-position: center 20px;
   transition: opacity 0.2s linear;
 }
 
@@ -337,27 +338,19 @@ html.no-js #home #caroussel .products ul li  {
   transition: .25s;
 }
 
-.products [data-category=macarons] {
-  padding-top: 60px !important;
-  background-position: center 20px !important;
+[data-category="Macaron"] img {
+  width: 140px !important;
+  margin-top: 10px !important;
 }
 
-.products [data-category=cup-cakes] {
-  padding-top: 20px !important;
-  background-position: center 40px !important;
+[data-category="Pie"] img {
+  width: 170px !important;
+  margin-top: -20px !important;
 }
 
-.products [data-category=cup-cakes] img {
-  width: 200px !important;
-}
-
-.products [data-category=tarts] {
-  padding-top: 30px !important;
-  background-position: center 10px !important;
-}
-
-.products [data-category=tarts] img {
-  width: 190px !important;
+[data-category="Cupcake"] img {
+  width: 180px !important;
+  margin-top: -30px !important;
 }
 
 .products ul li span,
@@ -902,6 +895,31 @@ div.main.fade > section:first-child > *,
 div.main.fade > section:not(:first-child)  {
   opacity: 0;
 }
+
+/*div.main > section:first-child::before {
+  content: 'Please wait while loading';
+  width: 200px;
+  height: 50px;
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  margin-left: -100px;
+  background: url(../images/theloader.gif);
+  background-size: 50px 50px;
+  background-repeat: no-repeat;
+  background-position: top center;
+  text-align: center;
+  padding-top: 60px;
+  color: #7A7A7A;
+  font-size: .9em;
+  pointer-events: none;
+  opacity: 0;
+  transition: .5s opacity;
+}
+
+div.main.fade > section:first-child::before {
+  opacity: 1;
+}*/
 
 [data-to=products] > section {
   height: 920px !important;
