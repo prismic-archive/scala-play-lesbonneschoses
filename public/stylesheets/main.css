@@ -716,7 +716,7 @@ html.no-js #home #caroussel .products ul li {
 #products #catalog {
   background: #f8f8f8;
   padding: 50px 0;
-  height: 920px;
+  min-height: 920px;
   position: relative;
 }
 

@@ -1,20 +1,22 @@
+@(product: com.zenexity.wroom.client.Document)
+
 @main(title = "Coffee Macaron", id = "product") {
 
   <section id="detail">
 
     <div>
 
-      <img src="/assets/bouh/chocolat-detail.png">
+      <img src="@(product.getImage("product.image", "main").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
 
-      <h4>$4.95</h4>
-      <h3>Chocolate Macaron</h3>
+      <h4>@product.getNumber("product.price", "$0.00")</h4>
+      <h3>@product.getText("product.name").getOrElse("Product")</h3>
 
       <p>
-        There is so much rich, decadent chocolate in this macaron that the chocolatey pleasure is just endless! As you let the softness and the strength of our preciously selected cocoa waken your senses, you will feel a lot of pleasure and a little bit of guilt, for giving in to your dark (chocolate) side again!
+        @product.getText("product.description")
       </p>
 
       <p>
-        <a href="#"><strong style="background: #7a462c">#7a462c</strong></a>
+        <a href="#"><strong style="background: @product.getText("product.color")">@product.getText("product.color")</strong></a>
       </p>
 
     </div>
