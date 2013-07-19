@@ -281,7 +281,6 @@ html.no-js #home #caroussel nav {
   margin: 0;
   padding: 0;
   text-align: center;
-  overflow: hidden;
 }
 
 #home #caroussel .products ul {
@@ -781,7 +780,7 @@ html.no-js #home #caroussel .products ul li {
   width: 400px;
   position: absolute;
   left: 0;
-  top: 0;
+  top: -40px;
 }
 
 #product #detail div h4,
@@ -830,7 +829,7 @@ html.no-js #home #caroussel .products ul li {
   position: absolute;
   left: 0;
   top: 0;
-  border: 8px solid rgba(255,255,255,.5);
+  border: 8px solid rgba(255,255,255,.6);
   box-sizing: border-box;
 }
 

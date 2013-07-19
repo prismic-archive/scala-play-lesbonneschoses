@@ -8,7 +8,9 @@ import com.zenexity.wroom.client._
 
 object Application extends Controller {
 
-  def SESSION = Api.get("http://lesbonneschoses.wroom.io/api")
+  val CACHE = BuiltInCache(200)
+
+  def SESSION = Api.get("http://lesbonneschoses.wroom.io/api", cache = CACHE)
 
   val PageNotFound = NotFound("OOPS")
 
@@ -24,7 +26,7 @@ object Application extends Controller {
 
       (productsRequest, featuredRequest) = (
         session.forms("products").ref(session.master).submit(),
-        session.forms("everything").query("""[[:d document.tag  "Featured"]]""").ref(session.master).submit()
+        session.forms("featured").ref(session.master).submit()
       )
 
       products <- productsRequest
