@@ -828,7 +828,15 @@ html.no-js #home #caroussel .products ul li {
   padding: 0 50px;
 }
 
+#product #detail div p em {
+  font-style: italic;
+}
+
 #product #detail div p strong {
+  font-weight: bold;
+}
+
+#product #detail div p .color {
   font-size: 0;
   color: transparent;
   display: inline-block;
@@ -838,7 +846,7 @@ html.no-js #home #caroussel .products ul li {
   position: relative;
 }
 
-#product #detail div p strong::after {
+#product #detail div p .color::after {
   content: '';
   display: inline-block;
   width: 40px;
