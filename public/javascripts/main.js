@@ -9,6 +9,10 @@ $(function() {
       return $.when( $('#home #caroussel').catslider() )
     },
 
+    'products': function() {
+      $('#catalog').css('height', (Math.ceil($('#catalog ul li').size() / 5) + 1) * 200 + 100)
+    },
+
     init: function() {
       (this[$('body > div.main').attr('id')] || (function() {}))()
     }

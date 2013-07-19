@@ -715,7 +715,7 @@ html.no-js #home #caroussel .products ul li {
 #products #catalog {
   background: #f8f8f8;
   padding: 50px 0;
-  min-height: 920px;
+  //min-height: 920px;
   position: relative;
 }
 
@@ -785,21 +785,39 @@ html.no-js #home #caroussel .products ul li {
 
 #product #detail div h4,
 #product #detail div h3,
+#product #detail div h2,
 #product #detail div p {
-  margin-left: 512px;
+  margin-left: 450px;
   text-align: center;
 }
 
 #product #detail div h4 {
-  font-family: Serif;
-  font-style: italic;
-  color: #aaa;
-  font-size: 1.6em;
+  font-size: 1.5em;
   font-weight: normal;
   margin-bottom: 0;
 }
 
-#product #detail div h3 {
+#product #detail div h4 strong {
+  color: #444;
+}
+
+#product #detail div h4 strong + em::before {
+  content: '–';
+  padding: 0 10px;
+  position: relative;
+  top: -1px;
+}
+
+#product #detail div h4 em {
+  font-size: 0.8em;
+  font-family: Serif;
+  font-style: italic;
+  color: #aaa;
+  position: relative;
+  top: -2px;
+}
+
+#product #detail div h2 {
   font-size: 3em;
   margin-top: 0; 
   margin-bottom: 0;
@@ -807,7 +825,7 @@ html.no-js #home #caroussel .products ul li {
 
 #product #detail div p {
   font-size: .9em;
-  padding: 0 30px;
+  padding: 0 50px;
 }
 
 #product #detail div p strong {
@@ -873,7 +891,18 @@ html.no-js #home #caroussel .products ul li {
   height: 450px;
   background-size: cover;
   background-position: center;
+  position: relative;
 } 
+
+#product #gallery.noimage::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+}
 
 /* ==========================================================================
    Page transitions
