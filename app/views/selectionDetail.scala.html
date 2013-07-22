@@ -1,0 +1,23 @@
+@(selection: com.zenexity.wroom.client.Document)
+
+@main(title = selection.getText("selection.name").getOrElse("Selection"), id = "selection") {
+
+  <section id="page-header">
+
+    <div style="@selection.getImage("selection.catcher_image", "main").map(img => s"background-image: url(${img.url})")">
+      <div>
+        <h1>@selection.getText("selection.name")</h1>
+
+        <p>
+          @selection.getText("selection.short_lede")
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="page-body">
+    
+  </section>
+
+}

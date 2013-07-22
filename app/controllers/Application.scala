@@ -30,7 +30,7 @@ object Application extends Controller {
       products <- productsRequest
       featured <- featuredRequest
     } yield {
-      Ok(views.html.index(products))
+      Ok(views.html.index(products, featured))
     }
   }
 
@@ -84,6 +84,21 @@ object Application extends Controller {
       maybeStore.collect {
         case store if store.slug == slug => Ok(views.html.storeDetail(store))
         case store if store.slugs.contains(slug) => MovedPermanently(routes.Application.storeDetail(id, store.slug).url)
+      }.getOrElse(PageNotFound)
+    }
+  }
+
+  // --
+
+  def selectionDetail(id: String, slug: String) = Action.async {
+    for {
+      session <- SESSION
+      selections <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "selection"]]""").ref(session.master).submit()
+      maybeSelection = selections.headOption
+    } yield {
+      maybeSelection.collect {
+        case selection if selection.slug == slug => Ok(views.html.selectionDetail(selection))
+        case selection if selection.slugs.contains(slug) => MovedPermanently(routes.Application.selectionDetail(id, selection.slug).url)
       }.getOrElse(PageNotFound)
     }
   }

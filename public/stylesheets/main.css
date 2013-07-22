@@ -546,7 +546,7 @@ html.no-js #home #caroussel .products ul li  {
 #home #featured > div.special-offer h3 span {
   padding-top: 150px;
   height: 150px;
-  font-size: 4em;
+  font-size: 3em;
   line-height: 1em;
 }
 
@@ -1075,6 +1075,19 @@ html.no-js #home #caroussel .products ul li {
 }
 
 /* ==========================================================================
+   Selection
+   ========================================================================== */
+
+#selection #page-header{
+  height: 300px;
+}
+
+#selection #page-header div {
+  height: 250px;
+  padding-bottom: 50px;
+}
+
+/* ==========================================================================
    Page transitions
    ========================================================================== */
 
@@ -1112,6 +1125,10 @@ div.main.fade > section:not(:first-child)  {
 
 [data-to=stores] > section {
   height: 500px !important;
+}
+
+[data-to=selection] > section {
+  height: 300px !important;
 }
 
 /* ==========================================================================

@@ -1,4 +1,4 @@
-@(products: Seq[com.zenexity.wroom.client.Document])
+@(products: Seq[com.zenexity.wroom.client.Document], featured: Seq[com.zenexity.wroom.client.Document])
 
 @main(title = "Home", id = "home") {
 
@@ -16,7 +16,7 @@
 
       @Application.CATEGORIES.keys.map { category =>
         <ul>
-          @products.filter(_.tags.contains(category)).take(5).map { product =>
+          @products.filter(_.tags.contains(category)).filterNot(_.tags.contains("Featured")).take(5).map { product =>
             <li data-category="@category">
               <a href="@routes.Application.productDetail(product.id, product.slug)">
                 <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
@@ -38,32 +38,33 @@
 
   <section id="featured">
 
-    <div class="selection" style="background-image: url(/assets/bouh/collection-tarte.png)">
-      <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
-        <h3><span>Spring fever</span></h3>
-        <p>
-          <span>Catch spring delights fever with hot colors, specialty flavors samples, and liquor chocolates.</span>
-        </p>
-      </a>
-    </div>
+    @featured.filterNot(_.typ == "blog-post").take(3).map {
 
-    <div class="special-offer" style="background-image: url(/assets/bouh/collection-macaron.png)">
-      <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
-        <h3><span>Coconut macaron</span></h3>
-        <p>
-          <em>$2.50</em>
-        </p>
-      </a>
-    </div>
+      case product @ com.zenexity.wroom.client.Document(_, "product", _, _, _, _) => {
+        <div class="special-offer" style="@product.getImage("product.gallery[0]", "squared").map { img => background-image: url(@img.url); }">
+          <a href="@routes.Application.productDetail(product.id, product.slug)">
+            <h3><span>@product.getText("product.name").getOrElse("Product")</span></h3>
+            <p>
+              <em>@product.getNumber("product.price", "$0.00").getOrElse("–")</em>
+            </p>
+          </a>
+        </div>
+      }
 
-    <div class="selection" style="background-image: url(/assets/bouh/selection-chou.png); color: #000">
-      <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
-        <h3><span>Wedding gift box</span></h3>
-        <p>
-          <span>Bring a little bit of Paris to your wedding with these irresistible desserts.</span>
-        </p>
-      </a>
-    </div>
+      case selection @ com.zenexity.wroom.client.Document(_, "selection", _, _, _, _) => {
+        <div class="selection" style="@selection.getImage("selection.catcher_image", "squarred").map { img => background-image: url(@img.url); }">
+          <a href="@routes.Application.selectionDetail(selection.id, selection.slug)">
+            <h3><span>@selection.getText("selection.name").getOrElse("Selection")</span></h3>
+            <p>
+              <span>@selection.getText("selection.short_lede")</span>
+            </p>
+          </a>
+        </div>
+      }
+
+      case com.zenexity.wroom.client.Document(_, "job-offer", _, _, _, _) => {}
+    
+    }
 
   </section>
 
