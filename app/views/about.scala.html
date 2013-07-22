@@ -1,0 +1,7 @@
+@(about: com.zenexity.wroom.client.Document)
+
+@page(id = "about")(title = about.getText("article.title"), image = about.getImage("article.image", "main").map(_.url), catcher = about.getHtml("article.short_lede").map(Html.apply)) {
+
+  @about.getHtml("article.content").map(Html.apply)
+
+}

@@ -2,10 +2,18 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                                                 controllers.Application.index
-GET     /products                                         controllers.Application.products
-GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug            controllers.Application.product(id, slug)
+GET     /                                                   controllers.Application.index
+
+GET     /about                                              controllers.Application.about()
+
+GET     /jobs                                               controllers.Application.jobs()
+
+GET     /stores                                             controllers.Application.stores()
+
+GET     /blog                                               controllers.Application.blog()
+
+GET     /products                                           controllers.Application.products
+GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.product(id, slug)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                      controllers.Assets.at(path="/public", file)
+GET     /assets/*file                                       controllers.Assets.at(path="/public", file)

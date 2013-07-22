@@ -23,18 +23,45 @@ object Application extends Controller {
   def index = Action.async {
     for {
       session <- SESSION
-
       (productsRequest, featuredRequest) = (
         session.forms("products").ref(session.master).submit(),
         session.forms("featured").ref(session.master).submit()
       )
-
       products <- productsRequest
       featured <- featuredRequest
     } yield {
       Ok(views.html.index(products))
     }
   }
+
+  // -- 
+
+  def about = Action.async {
+    for {
+      session <- SESSION
+      pageId = session.bookmarks.get("about").getOrElse("")
+      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      maybeAbout = pages.headOption
+    } yield {
+      maybeAbout.map { doc =>
+        Ok(views.html.about(doc))
+      }.getOrElse(PageNotFound)
+    }
+  }
+
+  // --
+
+  def jobs = TODO
+
+  // -- 
+
+  def stores = TODO
+
+  // --
+
+  def blog = TODO
+
+  // --
 
   def products = Action.async {
     for {

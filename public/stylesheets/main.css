@@ -98,7 +98,12 @@ body {
 }
 
 header {
-  background: #f8f8f8;
+  background: none;
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  max-width: 1440px;
+  width: 100%;
 }
 
 header nav {
@@ -190,6 +195,7 @@ footer {
   padding-top: 15px;
   color: #ccc;
   font-size: 0.8em;
+  text-align: center;
 }
 
 footer a {
@@ -202,9 +208,10 @@ footer a {
 
 #home #caroussel {
   background: #f8f8f8;
-  height: 380px;
+  height: 450px;
   position: relative;
   overflow: visible !important;
+  padding-top: 70px;
 }
 
 #home #caroussel::before {
@@ -222,7 +229,7 @@ footer a {
 }
 
 html.no-js #home #caroussel {
-  height: 370px;
+  height: 440px;
   overflow: hidden !important;
 }
 
@@ -288,7 +295,7 @@ html.no-js #home #caroussel nav {
   position: absolute;
   left: 0;
   right: 0;
-  top: 50px;
+  top: 120px;
 }
 
 #home #caroussel .products ul.current {
@@ -714,8 +721,7 @@ html.no-js #home #caroussel .products ul li {
 
 #products #catalog {
   background: #f8f8f8;
-  padding: 50px 0;
-  //min-height: 920px;
+  padding: 120px 0 50px 0;
   position: relative;
 }
 
@@ -765,8 +771,8 @@ html.no-js #home #caroussel .products ul li {
 
 #product #detail {
   background: #f8f8f8;
-  padding: 40px 0;
-  height: 500px;
+  padding: 110px 0 40px 0;
+  height: 570px;
   position: relative;
 }
 
@@ -913,6 +919,56 @@ html.no-js #home #caroussel .products ul li {
 }
 
 /* ==========================================================================
+   Pages
+   ========================================================================== */
+
+#page-header {
+  height: 500px;
+  background: #f8f8f8;
+}
+
+#page-header > div {
+  height: 500px;
+  width: 100%;
+  display: table;
+}
+
+#page-header > div > div {
+  background: rgba(0,0,0,.2);
+  padding-bottom: 100px;
+  height: 400px;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  display: table-cell;
+  vertical-align: bottom;
+}
+
+#page-header h1 {
+  width: 800px;
+  margin: 0 auto;
+  font-size: 3em;
+}
+
+#page-header p {
+  width: 600px;
+  margin: 0 auto;
+  font-size: 1em;
+}
+
+#page-body {
+  width: 800px;
+  margin: 50px auto;
+  text-align: center;
+  font-size: 0.9em;
+  padding-bottom: 50px;
+}
+
+#page-body h2 {
+  font-size: 2.8em;
+}
+
+/* ==========================================================================
    Page transitions
    ========================================================================== */
 
@@ -932,41 +988,20 @@ div.main.fade > section:not(:first-child)  {
   opacity: 0;
 }
 
-/*div.main > section:first-child::before {
-  content: 'Please wait while loading';
-  width: 200px;
-  height: 50px;
-  position: absolute;
-  top: 140px;
-  left: 50%;
-  margin-left: -100px;
-  background: url(../images/theloader.gif);
-  background-size: 50px 50px;
-  background-repeat: no-repeat;
-  background-position: top center;
-  text-align: center;
-  padding-top: 60px;
-  color: #7A7A7A;
-  font-size: .9em;
-  pointer-events: none;
-  opacity: 0;
-  transition: .5s opacity;
-}
-
-div.main.fade > section:first-child::before {
-  opacity: 1;
-}*/
-
 [data-to=products] > section {
   height: 920px !important;
 }
 
 [data-to=product] > section {
-  height: 500px !important;
+  height: 570px !important;
 }
 
 [data-to=home] > section {
-  height: 380px !important;
+  height: 450px !important;
+}
+
+[data-to=about] > section {
+  height: 500px !important;
 }
 
 /* ==========================================================================

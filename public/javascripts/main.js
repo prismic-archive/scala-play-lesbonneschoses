@@ -10,7 +10,7 @@ $(function() {
     },
 
     'products': function() {
-      $('#catalog').css('height', (Math.ceil($('#catalog ul li').size() / 5) + 1) * 200 + 100)
+      $('#catalog').css('height', (Math.ceil($('#catalog ul li').size() / 5) + 1) * 200 + 170)
     },
 
     init: function() {
