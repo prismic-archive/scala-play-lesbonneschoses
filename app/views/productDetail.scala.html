@@ -26,7 +26,20 @@
   </section>
 
   @product.getImage("product.gallery[0]", "main").map { img =>
+
     <section id="gallery" style="background-image: url(@img.url)"></section>
+
+  }.getOrElse {
+
+    @for(
+      author <- product.getText("product.testimonial_author[0]");
+      quote <- product.getText("product.testimonial_quote[0]")
+    ) {
+      <section id="quote">
+        <blockquote>@quote <strong>said @author</strong></blockquote>
+      </section>
+    }
+
   }
 
 }

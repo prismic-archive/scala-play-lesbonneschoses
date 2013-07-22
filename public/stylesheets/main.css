@@ -11,6 +11,14 @@
 }
 
 @font-face {
+  font-family: 'MavenPro';
+  src: url('../fonts/MavenPro-Black.eot');
+  src: local('☺'), url('../fonts/MavenPro-Black.woff') format('woff'), url('../fonts/MavenPro-Black.ttf') format('truetype'), url('../fonts/MavenPro-Black.svg') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'Blanch';
   src: url('../fonts/BLANCH_CONDENSED.eot');
   src: local('☺'), url('../fonts/BLANCH_CONDENSED.woff') format('woff'), url('../fonts/BLANCH_CONDENSED.ttf') format('truetype'), url('../fonts/BLANCH_CONDENSED.svg') format('svg');
@@ -166,7 +174,13 @@ header nav ul li {
 
 header nav ul li a {
   color: #aaa;
-  transition: .1s;
+  border-bottom: 2px solid #fff;
+  transition: .25s;
+}
+
+header nav ul li a.selected {
+  border-bottom: 2px solid #666;
+  color: #111;
 }
 
 header nav ul li a:hover {
@@ -208,7 +222,7 @@ footer a {
 
 #home #caroussel {
   background: #f8f8f8;
-  height: 450px;
+  height: 420px;
   position: relative;
   overflow: visible !important;
   padding-top: 70px;
@@ -229,7 +243,6 @@ footer a {
 }
 
 html.no-js #home #caroussel {
-  height: 440px;
   overflow: hidden !important;
 }
 
@@ -918,6 +931,47 @@ html.no-js #home #caroussel .products ul li {
   background: rgba(255, 255, 255, 0.7);
 }
 
+#product #quote blockquote {
+  width: 400px;
+  margin: 50px auto;
+  padding: 0 20px;
+  text-align: center;
+  font-style: italic;
+  color: #5F5F5F;
+  position: relative;
+}
+
+#product #quote blockquote::before {
+  content: '«';
+  position: absolute;
+  left: -40px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  font-size: 4em;
+  font-family: 'Serif';
+  color: #B8B6B6;
+}
+
+#product #quote blockquote::after {
+  content: '»';
+  position: absolute;
+  right: -40px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  font-size: 4em;
+  font-family: 'Serif';
+  color: #B8B6B6;
+}
+
+#product #quote blockquote strong {
+  font-weight: bold;
+  display: block;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
 /* ==========================================================================
    Pages
    ========================================================================== */
@@ -953,7 +1007,7 @@ html.no-js #home #caroussel .products ul li {
 #page-header p {
   width: 600px;
   margin: 0 auto;
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
 #page-body {
@@ -966,6 +1020,58 @@ html.no-js #home #caroussel .products ul li {
 
 #page-body h2 {
   font-size: 2.8em;
+}
+
+#page-body p {
+  padding: 10px 0;
+}
+
+#page-body a {
+  color: #000;
+}
+
+/* ==========================================================================
+   Stores
+   ========================================================================== */
+
+#stores #page-body article {
+  display: table;
+  width: 800px;
+  background-position: center;
+  margin: 20px 0;
+}
+
+#stores #page-body article a {
+  display: table-cell;
+  height: 100px;
+  vertical-align: middle;
+  text-decoration: none;
+  color: #FFF;
+  background: rgba(0, 0, 0, 0.3);
+  transition: .25s;
+}
+
+#stores #page-body article a:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#stores #page-body article a h3 {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+#stores #page-body article a h3::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #fff;
+  margin: 0 auto 10px auto;
+  transition: .25s;
+}
+
+#stores #page-body article a:hover h3::after {
+  width: 160px !important;
 }
 
 /* ==========================================================================
@@ -997,10 +1103,14 @@ div.main.fade > section:not(:first-child)  {
 }
 
 [data-to=home] > section {
-  height: 450px !important;
+  height: 420px !important;
 }
 
 [data-to=about] > section {
+  height: 500px !important;
+}
+
+[data-to=stores] > section {
   height: 500px !important;
 }
 

@@ -41,11 +41,9 @@ object Application extends Controller {
       session <- SESSION
       pageId = session.bookmarks.get("about").getOrElse("")
       pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
-      maybeAbout = pages.headOption
+      maybePage = pages.headOption
     } yield {
-      maybeAbout.map { doc =>
-        Ok(views.html.about(doc))
-      }.getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.about(page))).getOrElse(PageNotFound)
     }
   }
 
@@ -55,7 +53,30 @@ object Application extends Controller {
 
   // -- 
 
-  def stores = TODO
+  def stores = Action.async {
+    for {
+      session <- SESSION
+      pageId = session.bookmarks.get("stores").getOrElse("")
+      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      stores <- session.forms("stores").ref(session.master).submit()
+      maybePage = pages.headOption
+    } yield {
+      maybePage.map(page => Ok(views.html.stores(page, stores))).getOrElse(PageNotFound)
+    }
+  }
+
+  def storeDetail(id: String, slug: String) = Action.async {
+    for {
+      session <- SESSION
+      stores <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "store"]]""").ref(session.master).submit()
+      maybeStore = stores.headOption
+    } yield {
+      maybeStore.collect {
+        case store if store.slug == slug => Ok(views.html.storeDetail(store))
+        case store if store.slugs.contains(slug) => MovedPermanently(routes.Application.storeDetail(id, store.slug).url)
+      }.getOrElse(PageNotFound)
+    }
+  }
 
   // --
 
@@ -72,15 +93,15 @@ object Application extends Controller {
     }
   }
 
-  def product(id: String, slug: String) = Action.async {
+  def productDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      products <- session.forms("everything").query(s"""[[:d document.id "$id"]]""").ref(session.master).submit()
+      products <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "product"]]""").ref(session.master).submit()
       maybeProduct = products.headOption
     } yield {
       maybeProduct.collect {
-        case product if product.slug == slug => Ok(views.html.product(product))
-        case product if product.slugs.contains(slug) => MovedPermanently(routes.Application.product(id, product.slug).url)
+        case product if product.slug == slug => Ok(views.html.productDetail(product))
+        case product if product.slugs.contains(slug) => MovedPermanently(routes.Application.productDetail(id, product.slug).url)
       }.getOrElse(PageNotFound)
     }
   }

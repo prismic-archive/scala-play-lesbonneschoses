@@ -9,11 +9,12 @@ GET     /about                                              controllers.Applicat
 GET     /jobs                                               controllers.Application.jobs()
 
 GET     /stores                                             controllers.Application.stores()
+GET     /stores/$id<[-_a-zA-Z0-9]{16}>/:slug                controllers.Application.storeDetail(id, slug)
 
 GET     /blog                                               controllers.Application.blog()
 
 GET     /products                                           controllers.Application.products
-GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.product(id, slug)
+GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.productDetail(id, slug)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)

@@ -1,0 +1,15 @@
+@(main: com.zenexity.wroom.client.Document, stores: Seq[com.zenexity.wroom.client.Document])
+
+@page(id = "stores")(title = main.getText("article.title"), image = main.getImage("article.image", "main").map(_.url), catcher = main.getHtml("article.short_lede").map(Html.apply)) {
+
+  @main.getHtml("article.content").map(Html.apply)
+
+  @stores.map { store => 
+ 
+    <article class="store" style="@store.getImage("store.image", "medium").map { img => background-image: url(@img.url) }">
+      <a href="@routes.Application.storeDetail(store.id, store.slug)"><h3>@store.getText("store.name")</h3></a>
+    </article>
+
+  }
+
+}

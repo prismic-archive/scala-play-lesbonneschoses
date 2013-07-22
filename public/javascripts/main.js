@@ -31,6 +31,7 @@ $(function() {
     var load = function(href) {
       return Helpers.scrollTop()
         .then(function() { 
+          $('header nav a').removeClass('selected')
           return Helpers.fade()
         })
         .then(function() { 
@@ -40,12 +41,13 @@ $(function() {
           var $body = $($.parseHTML(html.match(/<body[^>]*>([\s\S.]*)<\/body>/i)[0])),
               $fragment = $body.filter('div.main')
 
-          return { $el: $fragment, page: $fragment.attr('id') }
+          return { $el: $fragment, page: $fragment.attr('id'), selected: $('nav a.selected', $body.filter('header')).attr('href') }
         })
         .then(function(loaded) {
           return $('body > div.main').attr('data-to', loaded.page).delay(250).promise().then(
             function() {
               $('body > div.main').attr('id', loaded.page).html(loaded.$el.html()).removeAttr('data-to')
+              $('header nav a[href="' + loaded.selected + '"]').addClass('selected')
               return loaded
             }
           )
@@ -64,7 +66,7 @@ $(function() {
       e.preventDefault()
 
       var href = $(this).attr('href')
-      if(href == document.location.pathname) return $.when('DONE')
+      if(href == document.location.pathname || href[0] == '#') return $.when('DONE')
 
       load(href).then(function(newState) {
         history.pushState(null, null, href)
@@ -96,13 +98,6 @@ $(function() {
       return Helpers.defer(function() {
         return $el[$el.is('.fade') ? 'removeClass' : 'addClass']('fade').delay(250).promise()
       })
-    },
-
-    swap: function($el, newPage) {
-      return this.scrollTop()
-        .then(function() { return Helpers.fade().then(function() { return $('body > div.main').attr('data-to', newPage).delay(250).promise() }) })
-        .then(function() { $.when( $('body > div.main').attr('id', newPage).html($el.html()).removeAttr('data-to') ) })
-        .then(function() { Helpers.fade(); return $.when('DONE')  })
     },
 
     defer: function(f) {
