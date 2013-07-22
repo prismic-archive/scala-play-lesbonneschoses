@@ -49,7 +49,17 @@ object Application extends Controller {
 
   // --
 
-  def jobs = TODO
+  def jobs = Action.async {
+    for {
+      session <- SESSION
+      pageId = session.bookmarks.get("jobs").getOrElse("")
+      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      jobs <- session.forms("jobs").ref(session.master).submit()
+      maybePage = pages.headOption
+    } yield {
+      maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
+    }
+  }
 
   // -- 
 

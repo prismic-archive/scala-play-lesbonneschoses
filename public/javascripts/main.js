@@ -68,10 +68,10 @@ $(function() {
       var href = $(this).attr('href')
       if(href == document.location.pathname || href[0] == '#') return $.when('DONE')
 
-      load(href).then(function(newState) {
-        history.pushState(null, null, href)
-        url = document.location.toString()
-      })
+      history.pushState(null, null, href)
+      url = document.location.toString()
+
+      load(href)
     })
 
     // Intercept back/forward

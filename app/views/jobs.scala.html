@@ -1,0 +1,13 @@
+@(main: com.zenexity.wroom.client.Document, jobs: Seq[com.zenexity.wroom.client.Document])
+
+@page(id = "jobs")(title = main.getText("article.title"), image = main.getImage("article.image", "main").map(_.url), catcher = main.getHtml("article.short_lede").map(Html.apply)) {
+
+  @main.getHtml("article.content").map(Html.apply)
+
+  @jobs.map { job => 
+ 
+    @job.getText("job-offer.name")
+
+  }
+
+}
