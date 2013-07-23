@@ -3,9 +3,9 @@
 @page(id = "stores")(
   title = main.getText("article.title"), 
   image = main.getImage("article.image", "main").map(_.url), 
-  catcher = main.getHtml("article.short_lede").map(Html.apply)) {
+  catcher = main.getHtml("article.short_lede", Application.LINK_RESOLVER).map(Html.apply)) {
 
-  @main.getHtml("article.content").map(Html.apply)
+  @main.getHtml("article.content", Application.LINK_RESOLVER).map(Html.apply)
 
   @stores.sortBy(_.getText("store.name").getOrElse("")).map { store => 
  

@@ -21,7 +21,11 @@ object Application extends Controller {
   )
 
   val LINK_RESOLVER: LinkResolver = { 
-    case Fragment.DocumentLink(id, "product", _, slug, false) => LinkDestination(url = routes.Application.productDetail(id, slug).url)
+    case Fragment.DocumentLink(_, _, _, _, Some("about"), _) => LinkDestination(url = routes.Application.about().url)
+    case Fragment.DocumentLink(_, _, _, _, Some("jobs"), _) => LinkDestination(url = routes.Application.jobs().url)
+    case Fragment.DocumentLink(_, _, _, _, Some("stores"), _) => LinkDestination(url = routes.Application.stores().url)
+    case Fragment.DocumentLink(id, "store", _, slug, _, false) => LinkDestination(url = routes.Application.storeDetail(id, slug).url)
+    case Fragment.DocumentLink(id, "product", _, slug, _, false) => LinkDestination(url = routes.Application.productDetail(id, slug).url)
     case _ => LinkDestination(url = routes.Application.brokenLink().url)
   }
 

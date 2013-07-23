@@ -17,7 +17,7 @@
         @product.getText("product.short_lede").orElse(product.getText("product.name")).getOrElse("Product")
       </h2>
 
-      @product.getHtml("product.description").map(Html.apply)
+      @product.getHtml("product.description", Application.LINK_RESOLVER).map(Html.apply)
 
       <p>
         <a href="#">
