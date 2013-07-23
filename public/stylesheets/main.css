@@ -103,6 +103,7 @@ body {
   margin: 0 auto;
   padding: 0;
   background: #fff;
+  overflow-x: hidden; 
 }
 
 header {
@@ -505,7 +506,7 @@ html.no-js #home #caroussel .products ul li  {
 
 #home #featured > div h3 span {
   width: 334px;
-  height: 300px;
+  height: 320px;
   font-size: 2em;
   margin: 0;
   display: table-cell;
@@ -517,7 +518,7 @@ html.no-js #home #caroussel .products ul li  {
 #home #featured > div p span,
 #home #featured > div p em {
   width: 334px;
-  height: 100px;
+  height: 70px;
   margin: 0;
   display: table-cell;
   vertical-align: middle;
@@ -525,7 +526,7 @@ html.no-js #home #caroussel .products ul li  {
   color: #fff;
 }
 
-#home #featured > div.selection h3 + p::before {
+#home #featured > div h3 + p::before {
   content: '';
   display: block;
   width: 80px;
@@ -535,30 +536,14 @@ html.no-js #home #caroussel .products ul li  {
   transition: .25s;
 }
 
-#home #featured > div.selection a:hover h3 + p::before {
+#home #featured > div a:hover h3 + p::before {
   width: 160px;
 }
 
-#home #featured > div.special-offer h3 {
-  margin-bottom: 13px;
-}
-
-#home #featured > div.special-offer h3 span {
-  padding-top: 150px;
-  height: 150px;
-  font-size: 3em;
-  line-height: 1em;
-}
-
-
-#home #featured > div.special-offer p em {
+#home #featured > div p em {
   font-family: 'Serif';
   font-size: 2em;
   transition: .25s;
-}
-
-#home #featured >div.special-offer a:hover p em {
-  font-size: 2.5em;
 }
 
 #home #blog {
@@ -1087,6 +1072,20 @@ html.no-js #home #caroussel .products ul li {
   padding-bottom: 50px;
 }
 
+#selection #page-body {
+  height: 500px;
+  position: relative;
+  width: 1024px;
+}
+
+#selection #page-body img {
+  width: 400px;
+  height: 400px;
+  position: absolute;
+  left: 0;
+  top: 50px;
+}
+
 /* ==========================================================================
    Page transitions
    ========================================================================== */
@@ -1124,6 +1123,10 @@ div.main.fade > section:not(:first-child)  {
 }
 
 [data-to=stores] > section {
+  height: 500px !important;
+}
+
+[data-to=jobs] > section {
   height: 500px !important;
 }
 

@@ -1,6 +1,6 @@
 @(id: String)(title: Option[String], image: Option[String] = None, catcher: Option[Html] = None)(body: Html)
 
-@main(title = title.getOrElse("-"), id = id) {
+@main(id = id, title = title) {
 
   <section id="page-header">
 

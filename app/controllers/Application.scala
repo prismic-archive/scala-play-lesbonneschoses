@@ -4,21 +4,36 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 
-import com.zenexity.wroom.client._
+import io.prismic._
 
 object Application extends Controller {
+
+  // -- API
 
   val CACHE = BuiltInCache(200)
 
   def SESSION = Api.get("http://lesbonneschoses.wroom.io/api", cache = CACHE)
-
-  val PageNotFound = NotFound("OOPS")
 
   val CATEGORIES = collection.immutable.ListMap(
     "Macaron" -> "Macarons",
     "Cupcake" -> "Cup Cakes",
     "Pie" -> "Little Pies"
   )
+
+  val LINK_RESOLVER: LinkResolver = { 
+    case Fragment.DocumentLink(id, "product", _, slug, false) => LinkDestination(url = routes.Application.productDetail(id, slug).url)
+    case _ => LinkDestination(url = routes.Application.brokenLink().url)
+  }
+
+  // -- Helpers
+
+  val PageNotFound = NotFound("OOPS")
+
+  def brokenLink = Action {
+    PageNotFound
+  }
+
+  // -- Home page
 
   def index = Action.async {
     for {
@@ -40,7 +55,7 @@ object Application extends Controller {
     for {
       session <- SESSION
       pageId = session.bookmarks.get("about").getOrElse("")
-      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      pages <- session.forms("everything").query(s"""[[at(document.id, "$pageId")]]""").ref(session.master).submit()
       maybePage = pages.headOption
     } yield {
       maybePage.map(page => Ok(views.html.about(page))).getOrElse(PageNotFound)
@@ -53,7 +68,7 @@ object Application extends Controller {
     for {
       session <- SESSION
       pageId = session.bookmarks.get("jobs").getOrElse("")
-      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      pages <- session.forms("everything").query(s"""[[at(document.id, "$pageId")]]""").ref(session.master).submit()
       jobs <- session.forms("jobs").ref(session.master).submit()
       maybePage = pages.headOption
     } yield {
@@ -67,7 +82,7 @@ object Application extends Controller {
     for {
       session <- SESSION
       pageId = session.bookmarks.get("stores").getOrElse("")
-      pages <- session.forms("everything").query(s"""[[:d document.id "$pageId"]]""").ref(session.master).submit()
+      pages <- session.forms("everything").query(s"""[[at(document.id, "$pageId")]]""").ref(session.master).submit()
       stores <- session.forms("stores").ref(session.master).submit()
       maybePage = pages.headOption
     } yield {
@@ -78,7 +93,7 @@ object Application extends Controller {
   def storeDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      stores <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "store"]]""").ref(session.master).submit()
+      stores <- session.forms("everything").query(s"""[[at(document.id, "$id")][at(document.type, "store")]]""").ref(session.master).submit()
       maybeStore = stores.headOption
     } yield {
       maybeStore.collect {
@@ -93,7 +108,7 @@ object Application extends Controller {
   def selectionDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      selections <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "selection"]]""").ref(session.master).submit()
+      selections <- session.forms("everything").query(s"""[[at(document.id, "$id")][at(document.type, "selection")]]""").ref(session.master).submit()
       maybeSelection = selections.headOption
     } yield {
       maybeSelection.collect {
@@ -121,7 +136,7 @@ object Application extends Controller {
   def productDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      products <- session.forms("everything").query(s"""[[:d document.id "$id"][:d document.type "product"]]""").ref(session.master).submit()
+      products <- session.forms("everything").query(s"""[[at(document.id, "$id")][at(document.type, "product")]]""").ref(session.master).submit()
       maybeProduct = products.headOption
     } yield {
       maybeProduct.collect {

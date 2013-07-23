@@ -1,6 +1,6 @@
-@(products: Seq[com.zenexity.wroom.client.Document], featured: Seq[com.zenexity.wroom.client.Document])
+@(products: Seq[io.prismic.Document], featured: Seq[io.prismic.Document])
 
-@main(title = "Home", id = "home") {
+@main(id = "home") {
 
   <section id="caroussel">
 
@@ -40,19 +40,19 @@
 
     @featured.filterNot(_.typ == "blog-post").take(3).map {
 
-      case product @ com.zenexity.wroom.client.Document(_, "product", _, _, _, _) => {
-        <div class="special-offer" style="@product.getImage("product.gallery[0]", "squared").map { img => background-image: url(@img.url); }">
+      case product if product.typ == "product" => {
+        <div style="@product.getImage("product.gallery[0]", "squared").map { img => background-image: url(@img.url); }">
           <a href="@routes.Application.productDetail(product.id, product.slug)">
             <h3><span>@product.getText("product.name").getOrElse("Product")</span></h3>
             <p>
-              <em>@product.getNumber("product.price", "$0.00").getOrElse("–")</em>
+              <span>@product.getText("product.short_lede")</span>
             </p>
           </a>
         </div>
       }
 
-      case selection @ com.zenexity.wroom.client.Document(_, "selection", _, _, _, _) => {
-        <div class="selection" style="@selection.getImage("selection.catcher_image", "squarred").map { img => background-image: url(@img.url); }">
+      case selection if selection.typ == "selection" => {
+        <div style="@selection.getImage("selection.catcher_image", "squarred").map { img => background-image: url(@img.url); }">
           <a href="@routes.Application.selectionDetail(selection.id, selection.slug)">
             <h3><span>@selection.getText("selection.name").getOrElse("Selection")</span></h3>
             <p>
@@ -61,29 +61,31 @@
           </a>
         </div>
       }
-
-      case com.zenexity.wroom.client.Document(_, "job-offer", _, _, _, _) => {}
     
     }
 
   </section>
 
-  <section id="blog">
+  @featured.filter(_.typ == "blog-post").headOption.map { blog =>
 
-    <h2>Fresh news from <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">our blog</a></h2>
+    <section id="blog">
 
-    <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
+      <h2>Fresh news from <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">our blog</a></h2>
 
-      <h1>Strawberry Cheesecake Profiteroles</h1>
+      <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
 
-      <p>
-        I know profiteroles are suppose to be stuffed with pastry cream, ice cream or some sort of cream. Okay, well cheesecake is made with cream cheese. That counts, right? And if doesn’t, what’s another broken rule? Let’s just agree that pate a choux whether in the form of profiteroles or eclairs is a vehichle for any type of stuffing.
-      </p>
+        <h1>Strawberry Cheesecake Profiteroles</h1>
 
-    </a>
+        <p>
+          I know profiteroles are suppose to be stuffed with pastry cream, ice cream or some sort of cream. Okay, well cheesecake is made with cream cheese. That counts, right? And if doesn’t, what’s another broken rule? Let’s just agree that pate a choux whether in the form of profiteroles or eclairs is a vehichle for any type of stuffing.
+        </p>
 
-    <a class="more" href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">Read more</a>
+      </a>
 
-  </section>
+      <a class="more" href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">Read more</a>
+
+    </section>
+
+  }
 
 }

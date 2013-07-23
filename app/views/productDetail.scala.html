@@ -1,6 +1,6 @@
-@(product: com.zenexity.wroom.client.Document)
+@(product: io.prismic.Document)
 
-@main(title = "Coffee Macaron", id = "product") {
+@main(id = "product", title = product.getText("product.name")) {
 
   <section id="detail">
 
@@ -8,13 +8,21 @@
 
       <img src="@(product.getImage("product.image", "main").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
 
-      <h4><strong>@product.getText("product.name").getOrElse("Missing product name")</strong>@product.getNumber("product.price", "$0.00").map { price =><em>@price</em>}</h4>
-      <h2>@product.getText("product.short_lede").orElse(product.getText("product.name")).getOrElse("Product")</h2>
+      <h4>
+        <strong>@product.getText("product.name").getOrElse("Missing product name")</strong>
+        @product.getNumber("product.price", "$0.00").map { price =><em>@price</em>}
+      </h4>
+      
+      <h2>
+        @product.getText("product.short_lede").orElse(product.getText("product.name")).getOrElse("Product")
+      </h2>
 
       @product.getHtml("product.description").map(Html.apply)
 
       <p>
-        <a href="#"><strong class="color" style="background: @product.getText("product.color")">@product.getText("product.color")</strong></a>
+        <a href="#">
+          <strong class="color" style="background: @product.getText("product.color")">@product.getText("product.color")</strong>
+        </a>
       </p>
 
     </div>
@@ -26,9 +34,7 @@
   </section>
 
   @product.getImage("product.gallery[0]", "main").map { img =>
-
     <section id="gallery" style="background-image: url(@img.url)"></section>
-
   }.getOrElse {
 
     @for(

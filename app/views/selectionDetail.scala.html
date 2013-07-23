@@ -1,6 +1,6 @@
-@(selection: com.zenexity.wroom.client.Document)
+@(selection: io.prismic.Document)
 
-@main(title = selection.getText("selection.name").getOrElse("Selection"), id = "selection") {
+@main(title = selection.getText("selection.name"), id = "selection") {
 
   <section id="page-header">
 
@@ -18,6 +18,8 @@
 
   <section id="page-body">
     
+    <img src="@(selection.getImage("selection.image", "main").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
+
   </section>
 
 }

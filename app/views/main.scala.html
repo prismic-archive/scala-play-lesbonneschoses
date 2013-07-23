@@ -1,4 +1,4 @@
-@(title: String, id: String)(content: Html)
+@(id: String, title: Option[String] = None)(content: Html)
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -7,7 +7,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <title>Les bonnes choses – @title</title>
+    <title>Les bonnes choses @title.map(txt => s" – $txt")</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
