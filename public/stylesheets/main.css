@@ -211,6 +211,7 @@ footer {
   color: #ccc;
   font-size: 0.8em;
   text-align: center;
+  clear: both;
 }
 
 footer a {
@@ -1060,6 +1061,80 @@ html.no-js #home #caroussel .products ul li {
 }
 
 /* ==========================================================================
+   Jobs
+   ========================================================================== */
+
+#jobs #page-body {
+  position: relative;
+  width: 1024px;
+}
+
+#jobs #page-body .presentation {
+  width: 800px;
+  margin: auto;
+}
+
+#jobs #page-body h2 {
+  margin-top: 100px;
+}
+
+#jobs #page-body .job {
+  width: 430px;
+  margin: 20px 30px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+#jobs #page-body .job a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#jobs #page-body .job::before {
+  content: '\e803\e803\e803';
+  font-family: 'Fontello';
+  color: #ccc;
+  letter-spacing: 5px;
+}
+
+#jobs #page-body .job h3 {
+  font-size: 1.5em;
+  margin: 5px 0;
+}
+
+#jobs #page-body .job p {
+  color: #999;
+  font-size: 0.9em;
+  min-height: 90px;
+}
+
+#jobs #page-body .job strong {
+  display: inline-block;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  font-weight: normal;;
+  font-size: 0.7em;
+  color: #777;
+  text-transform: uppercase;
+}
+
+#jobs #page-body .job:nth-child(2n) {
+  margin-right: 0;
+}
+
+/* ==========================================================================
+   Job detail
+   ========================================================================== */
+
+#job #page-header {
+  height: 250px;
+}
+
+#job #page-header div {
+  height: 200px;
+}
+
+/* ==========================================================================
    Selection
    ========================================================================== */
 
@@ -1128,6 +1203,10 @@ div.main.fade > section:not(:first-child)  {
 
 [data-to=jobs] > section {
   height: 500px !important;
+}
+
+[data-to=job] > section {
+  height: 250px !important;
 }
 
 [data-to=selection] > section {

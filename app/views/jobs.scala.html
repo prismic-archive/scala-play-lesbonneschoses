@@ -5,11 +5,39 @@
   image = main.getImage("article.image", "main").map(_.url), 
   catcher = main.getHtml("article.short_lede", Application.LINK_RESOLVER).map(Html.apply)) {
 
-  @main.getHtml("article.content", Application.LINK_RESOLVER).map(Html.apply)
+  <div class="presentation">
+    @main.getHtml("article.content", Application.LINK_RESOLVER).map(Html.apply)
+  </div>
 
-  @jobs.map { job => 
- 
-    @job.getText("job-offer.name")
+
+  @jobs.groupBy(_.getText("job-offer.service")).map { 
+
+    case (service, jobs) => {
+
+      <h2>
+        @service match {
+          case Some("Store") => { Positions in our Stores }
+          case Some("Office") => { Positions in our Offices }
+          case Some("Workshop") => { Positions in our Workshops }
+          case _ => { Other positions }
+        }
+      </h2>
+
+      <div class="listing">
+      @jobs.map { job =>
+        <div class="job">
+          <a href="@routes.Application.jobDetail(job.id, job.slug)">
+            <h3>@job.getText("job-offer.name")</h3>
+            <p>
+              @job.getStructuredText("job-offer.profile").flatMap(_.getFirstParagraph).map(_.text)
+            </p>
+            <strong>Learn more</strong>
+          </a>
+        </div>
+      }
+      </div>
+
+    }
 
   }
 

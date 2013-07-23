@@ -26,6 +26,7 @@ object Application extends Controller {
     case Fragment.DocumentLink(_, _, _, _, Some("stores"), _) => LinkDestination(url = routes.Application.stores().url)
     case Fragment.DocumentLink(id, "store", _, slug, _, false) => LinkDestination(url = routes.Application.storeDetail(id, slug).url)
     case Fragment.DocumentLink(id, "product", _, slug, _, false) => LinkDestination(url = routes.Application.productDetail(id, slug).url)
+    case Fragment.DocumentLink(id, "job-offer", _, slug, _, false) => LinkDestination(url = routes.Application.jobDetail(id, slug).url)
     case _ => LinkDestination(url = routes.Application.brokenLink().url)
   }
 
@@ -77,6 +78,24 @@ object Application extends Controller {
       maybePage = pages.headOption
     } yield {
       maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
+    }
+  }
+
+  def jobDetail(id: String, slug: String) = Action.async {
+    for {
+      session <- SESSION
+      pageId = session.bookmarks.get("jobs").getOrElse("")
+      pages <- session.forms("everything").query(s"""[[at(document.id, "$pageId")]]""").ref(session.master).submit()
+      jobs <- session.forms("everything").query(s"""[[at(document.id, "$id")][at(document.type, "job-offer")]]""").ref(session.master).submit()
+      maybeJob = jobs.headOption
+      maybePage = pages.headOption
+    } yield {
+      maybePage.flatMap { page =>
+        maybeJob.collect {
+          case job if job.slug == slug => Ok(views.html.jobDetail(page, job))
+          case job if job.slugs.contains(slug) => MovedPermanently(routes.Application.jobDetail(id, job.slug).url)
+        }
+      }.getOrElse(PageNotFound)
     }
   }
 

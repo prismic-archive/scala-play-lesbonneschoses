@@ -7,6 +7,7 @@ GET     /                                                   controllers.Applicat
 GET     /about                                              controllers.Application.about()
 
 GET     /jobs                                               controllers.Application.jobs()
+GET     /jobs/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.jobDetail(id, slug)
 
 GET     /stores                                             controllers.Application.stores()
 GET     /stores/$id<[-_a-zA-Z0-9]{16}>/:slug                controllers.Application.storeDetail(id, slug)

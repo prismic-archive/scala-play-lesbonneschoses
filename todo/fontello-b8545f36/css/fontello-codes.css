@@ -1,4 +1,5 @@
 
+.icon-star:before { content: '\e803'; } /* '' */
 .icon-cancel:before { content: '\e802'; } /* '' */
 .icon-th:before { content: '\e800'; } /* '' */
 .icon-search:before { content: '\e801'; } /* '' */

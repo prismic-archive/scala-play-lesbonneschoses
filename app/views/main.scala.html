@@ -27,7 +27,7 @@
           <li><a href="@routes.Application.stores()" @if(id == "stores") { class="selected" }>Stores</a></li>
         </ul>
         <ul>
-          <li><a href="@routes.Application.jobs()" @if(id == "jobs") { class="selected" }>Jobs</a></li>
+          <li><a href="@routes.Application.jobs()" @if(id == "jobs" || id == "job") { class="selected" }>Jobs</a></li>
           <li><a href="@routes.Application.blog()" @if(id == "blog") { class="selected" }>Blog</a></li>
         </ul>
       </nav>

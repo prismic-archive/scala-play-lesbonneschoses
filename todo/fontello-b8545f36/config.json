@@ -4,6 +4,12 @@
   "css_use_suffix": false,
   "glyphs": [
     {
+      "uid": "474656633f79ea2f1dad59ff63f6bf07",
+      "css": "star",
+      "code": 59395,
+      "src": "fontawesome"
+    },
+    {
       "uid": "7222571caa5c15f83dcfd447c58d68d9",
       "css": "search",
       "code": 59393,
