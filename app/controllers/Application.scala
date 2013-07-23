@@ -4,6 +4,8 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 
+import Play.current
+
 import io.prismic._
 
 object Application extends Controller {
@@ -12,7 +14,7 @@ object Application extends Controller {
 
   val CACHE = BuiltInCache(200)
 
-  def SESSION = Api.get("http://lesbonneschoses.wroom.io/api", cache = CACHE)
+  def SESSION = Api.get(Play.configuration.getString("prismic.api").getOrElse(sys.error("Missing configuration [prismic.api]")), cache = CACHE)
 
   val CATEGORIES = collection.immutable.ListMap(
     "Macaron" -> "Macarons",
