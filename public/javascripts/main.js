@@ -66,7 +66,7 @@ $(function() {
       e.preventDefault()
 
       var href = $(this).attr('href')
-      if(href == document.location.pathname || href[0] == '#') return $.when('DONE')
+      if(href[0] == '#') return $.when('DONE')
 
       history.pushState(null, null, href)
       url = document.location.toString()
@@ -77,7 +77,7 @@ $(function() {
     // Intercept back/forward
     $(window).on('popstate', function(e) {
       if(document.location.toString() != url) {
-        load(document.location.pathname)
+        load(document.location.href)
       }
       url = document.location.toString()
     })

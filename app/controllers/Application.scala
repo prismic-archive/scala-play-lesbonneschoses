@@ -42,19 +42,26 @@ object Application extends Controller {
     PageNotFound
   }
 
-  def getBookmark(session: Api, bookmark: String, ref: Ref): Future[Option[Document]] = {
+  def getBookmark(session: Api, ref: Ref, bookmark: String): Future[Option[Document]] = {
     session.bookmarks.get(bookmark).map { id =>
-      getDocument(session, id, ref)
+      getDocument(session, ref, id)
     }.getOrElse {
       Future.successful(None)
     }
   }
 
-  def getDocument(session: Api, id: String, ref: Ref): Future[Option[Document]] = {
+  def getDocument(session: Api, ref: Ref, id: String): Future[Option[Document]] = {
     for {
       documents <- session.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ref).submit()
     } yield {
       documents.headOption
+    }
+  }
+
+  def getDocuments(session: Api, ref: Ref, ids: String*): Future[Seq[Document]] = {
+    ids match {
+      case Nil => Future.successful(Nil)
+      case ids => session.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ref).submit()
     }
   }
 
@@ -84,7 +91,7 @@ object Application extends Controller {
   def about = Action.async {
     for {
       session <- SESSION
-      maybePage <- getBookmark(session, "about", session.master)
+      maybePage <- getBookmark(session, session.master, "about")
     } yield {
       maybePage.map(page => Ok(views.html.about(page))).getOrElse(PageNotFound)
     }
@@ -95,7 +102,7 @@ object Application extends Controller {
   def jobs = Action.async {
     for {
       session <- SESSION
-      maybePage <- getBookmark(session, "jobs", session.master)
+      maybePage <- getBookmark(session, session.master, "jobs")
       jobs <- session.forms("jobs").ref(session.master).submit()
     } yield {
       maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
@@ -105,8 +112,8 @@ object Application extends Controller {
   def jobDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      maybePage <- getBookmark(session, "jobs", session.master)
-      maybeJob <- getDocument(session, id, session.master)
+      maybePage <- getBookmark(session, session.master, "jobs")
+      maybeJob <- getDocument(session, session.master, id)
     } yield {
       checkSlug(maybeJob, slug) { 
         case Left(newSlug) => MovedPermanently(routes.Application.jobDetail(id, newSlug).url)
@@ -122,7 +129,7 @@ object Application extends Controller {
   def stores = Action.async {
     for {
       session <- SESSION
-      maybePage <- getBookmark(session, "stores", session.master)
+      maybePage <- getBookmark(session, session.master, "stores")
       stores <- session.forms("stores").ref(session.master).submit()
     } yield {
       maybePage.map(page => Ok(views.html.stores(page, stores))).getOrElse(PageNotFound)
@@ -132,7 +139,7 @@ object Application extends Controller {
   def storeDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      maybeStore <- getDocument(session, id, session.master)
+      maybeStore <- getDocument(session, session.master, id)
     } yield {
       checkSlug(maybeStore, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.storeDetail(id, newSlug).url)
@@ -146,11 +153,14 @@ object Application extends Controller {
   def selectionDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      maybeSelection <- getDocument(session, id, session.master)
+      maybeSelection <- getDocument(session, session.master, id)
+      products <- getDocuments(session, session.master, maybeSelection.map(_.getAll("selection.product").collect {
+        case Fragment.DocumentLink(id, "product", _, _, _, false) => id
+      }).getOrElse(Nil):_*)
     } yield {
       checkSlug(maybeSelection, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.selectionDetail(id, newSlug).url)
-        case Right(selection) => Ok(views.html.selectionDetail(selection))
+        case Right(selection) => Ok(views.html.selectionDetail(selection, products))
       }
     }
   }
@@ -173,11 +183,27 @@ object Application extends Controller {
   def productDetail(id: String, slug: String) = Action.async {
     for {
       session <- SESSION
-      maybeProduct <- getDocument(session, id, session.master)
+      maybeProduct <- getDocument(session, session.master, id)
+      relatedProducts <- getDocuments(session, session.master, maybeProduct.map(_.getAll("product.related").collect {
+        case Fragment.DocumentLink(id, "product", _, _, _, false) => id
+      }).getOrElse(Nil):_*)
     } yield {
       checkSlug(maybeProduct, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.productDetail(id, newSlug).url)
-        case Right(product) => Ok(views.html.productDetail(product))
+        case Right(product) => Ok(views.html.productDetail(product, relatedProducts))
+      }
+    }
+  }
+
+  def productsByFlavour(flavour: String) = Action.async {
+    for {
+      session <- SESSION
+      products <- session.forms("everything").query(s"""[[at(my.product.flavour, "$flavour")]]""").ref(session.master).submit()
+    } yield {
+      if(products.isEmpty) {
+        PageNotFound
+      } else {
+        Ok(views.html.productsByFlavour(flavour, products))
       }
     }
   }

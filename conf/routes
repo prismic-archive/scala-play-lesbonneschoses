@@ -16,6 +16,7 @@ GET     /blog                                               controllers.Applicat
 
 GET     /products                                           controllers.Application.products
 GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.productDetail(id, slug)
+GET     /products/by-flavour                                controllers.Application.productsByFlavour(flavour)
 
 GET     /selections/$id<[-_a-zA-Z0-9]{16}>/:slug            controllers.Application.selectionDetail(id, slug)
 

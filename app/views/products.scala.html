@@ -1,8 +1,10 @@
-@(products: Seq[io.prismic.Document])
+@(products: Seq[io.prismic.Document], title: Option[String] = None)
 
 @main(id = "products", title = Some("Our produts")) {
 
   <section id="catalog">
+
+    @title.map { txt => <h1>@txt</h1> }
   
     <div class="products">
     

@@ -727,6 +727,12 @@ html.no-js #home #caroussel .products ul li {
   position: relative;
 }
 
+#products #catalog h1 {
+  text-align: center;
+  font-size: 3em;
+  margin-top: 0;
+}
+
 #products #catalog ul li {
   padding-bottom: 0;
 }
@@ -961,6 +967,36 @@ html.no-js #home #caroussel .products ul li {
   margin-top: 10px;
 }
 
+#product #related {
+  width: 1024px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+#product #related h2 {
+  font-size: 2em;
+  margin-top: 2em;
+}
+
+#product #related li {
+  border: 2px solid #eee;
+  width: 250px;
+  margin: 8px 5px;
+}
+
+#product #related li:nth-child(3n) {
+  margin-right: 0;
+}
+
+#product #related li img {
+  margin-bottom: 30px;
+}
+
+#product #related li span,
+#product #related li em {
+  opacity: 1;
+}
+
 /* ==========================================================================
    Pages
    ========================================================================== */
@@ -1120,6 +1156,11 @@ html.no-js #home #caroussel .products ul li {
   font-size: 0.7em;
   color: #777;
   text-transform: uppercase;
+  transition: .1s;
+}
+
+#jobs #page-body .job strong:hover {
+  background: #f8f8f8
 }
 
 #jobs #page-body .job:nth-child(2n) {
@@ -1138,6 +1179,11 @@ html.no-js #home #caroussel .products ul li {
   height: 200px;
 }
 
+#job #page-body h1,
+#job #page-body h2 {
+  font-size: 2em;
+}
+
 /* ==========================================================================
    Selection
    ========================================================================== */
@@ -1152,9 +1198,9 @@ html.no-js #home #caroussel .products ul li {
 }
 
 #selection #page-body {
-  height: 500px;
   position: relative;
   width: 800px;
+  margin-bottom: 0;
 }
 
 #selection #page-body img {
@@ -1180,10 +1226,36 @@ html.no-js #home #caroussel .products ul li {
   font-family: Serif;
   font-style: italic;
   color: #AAA;
-  font-size: 2em;
+  font-size: 1.7em;
   font-weight: normal;
   position: relative;
   top: -20px;
+}
+
+#selection .products {
+  width: 1024px;
+  margin: auto;
+  text-align: center;
+}
+
+#selection .products h2 {
+  font-size: 2em;
+  margin-top: 0;
+}
+
+#selection .products li {
+  border: 2px solid #eee;
+  width: 250px;
+  margin: 8px 5px;
+}
+
+#selection .products li img {
+  margin-bottom: 30px;
+}
+
+#selection .products li span,
+#selection .products li em {
+  opacity: 1;
 }
 
 /* ==========================================================================
@@ -1207,7 +1279,7 @@ div.main.fade > section:not(:first-child)  {
 }
 
 [data-to=products] > section {
-  height: 920px !important;
+  height: 800px !important;
 }
 
 [data-to=product] > section {

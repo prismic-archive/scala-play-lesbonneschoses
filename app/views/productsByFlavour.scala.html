@@ -1,0 +1,13 @@
+@(flavour: String, products: Seq[io.prismic.Document])
+
+@views.html.products(products, title = Some(flavour match {
+  case "Chocolate"    => "All our pastries for the chocolate lovers"
+  case "Lemon/lime"   => "All our pastries with the sweet bitterness of lemon and lime"
+  case "Berries"      => "All our pastries with strawberry, raspberry, or any kind of berries"
+  case "Pistachio"    => "All our pastries with a salty taste of pistachio nuts"
+  case "Soft fruit"   => "All our pastries with various soft fruit"
+  case "Vanilla"      => "All our pastries for the vanilla addicts"
+  case "Caramel"      => "All our pastries with the pure sweetness of caramel"
+  case "Spice"        => "All our pastries with a spicy after-taste"
+  case flavour        => s"Flavour $flavour"
+}))
