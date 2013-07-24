@@ -3,6 +3,8 @@ package controllers
 import play.api._
 import play.api.mvc._
 
+import org.joda.time._
+
 import scala.concurrent._
 import play.api.libs.concurrent.Execution.Implicits._
 
@@ -17,12 +19,6 @@ object Application extends Controller {
   val CACHE = BuiltInCache(200)
 
   def SESSION = Api.get(Play.configuration.getString("prismic.api").getOrElse(sys.error("Missing configuration [prismic.api]")), cache = CACHE)
-
-  val CATEGORIES = collection.immutable.ListMap(
-    "Macaron" -> "Macarons",
-    "Cupcake" -> "Cup Cakes",
-    "Pie" -> "Little Pies"
-  )
 
   val LINK_RESOLVER: LinkResolver = { 
     case Fragment.DocumentLink(_, _, _, _, Some("about"), _)        => LinkDestination(url = routes.Application.about().url)
@@ -167,9 +163,30 @@ object Application extends Controller {
 
   // -- Blog
 
-  def blog = TODO
+  val blogCategories = List(
+     "Announcements", 
+     "Do it yourself", 
+     "Behind the scenes"
+  )
+
+  def blog(maybeCategory: Option[String]) = Action.async {
+    for {
+      session <- SESSION
+      posts <- maybeCategory.map(
+        category => session.forms("blog").query(s"""[[at(my.blog-post.category, "$category")]]""")
+      ).getOrElse(session.forms("blog")).ref(session.master).submit()
+    } yield {
+      Ok(views.html.posts(posts.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
+    }
+  }
 
   // -- Products
+
+  val productCategories = collection.immutable.ListMap(
+    "Macaron" -> "Macarons",
+    "Cupcake" -> "Cup Cakes",
+    "Pie" -> "Little Pies"
+  )
 
   def products = Action.async {
     for {

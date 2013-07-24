@@ -57,7 +57,7 @@
 
         <ul>
           @products.map { product =>
-            <li data-category="@product.tags.filter(Application.CATEGORIES.contains).headOption">
+            <li data-category="@product.tags.filter(Application.productCategories.contains).headOption">
               <a href="@routes.Application.productDetail(product.id, product.slug)">
                 <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
                 <span>@product.getText("product.name").getOrElse("Product")</span>

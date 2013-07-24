@@ -1,4 +1,4 @@
-@(id: String, title: Option[String] = None)(content: Html)
+@(title: Option[String] = None)(content: Html)
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -12,39 +12,34 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/normalize.min.css")">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/blog.css")">
 
     <script src="@routes.Assets.at("javascripts/modernizr-2.6.2.min.js")"></script>
   </head>
   <body>
 
     <header>
-      <nav>
-        <h1><a href="@routes.Application.index()">Les bonnes choses</a></h1>
 
+      <a href="@routes.Application.index()">
+        <h1>Les Bonnes Choses</h1>
+      </a>
+
+      <nav>
         <ul>
-          <li><a href="@routes.Application.about()" @if(id == "about") { class="selected" }>About</a></li>
-          <li><a href="@routes.Application.stores()" @if(id == "stores") { class="selected" }>Stores</a></li>
-        </ul>
-        <ul>
-          <li><a href="@routes.Application.jobs()" @if(id == "jobs" || id == "job") { class="selected" }>Jobs</a></li>
-          <li><a href="@routes.Application.blog()" @if(id == "blog") { class="selected" } target="_self">Our Blog</a></li>
+          <li><a href="@routes.Application.blog()">Home</a></li>
+          @Application.blogCategories.map { category =>
+            <li><a href="@routes.Application.blog(Some(category))">@category</a></li>
+          }
         </ul>
       </nav>
+
     </header>
 
-    <div class="main" id="@id">
+    <div class="main">
       @content
     </div>
 
-    <footer>
-      This is a demonstration website for <a href="http://prismic.io">prismic.io</a>
-    </footer>
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/jquery-1.10.1.min.js")"><\/script>')</script>
-
-    <script src="@routes.Assets.at("javascripts/catslider.js")"></script>
-    <script src="@routes.Assets.at("javascripts/main.js")"></script>
   </body>
 </html>

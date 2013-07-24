@@ -6,7 +6,7 @@
 
     <nav>
       <ul>
-        @Application.CATEGORIES.values.map { category =>
+        @Application.productCategories.values.map { category =>
            <li><a>@category</a></li>
         }
       </ul>
@@ -14,7 +14,7 @@
 
     <div class="products">
 
-      @Application.CATEGORIES.keys.map { category =>
+      @Application.productCategories.keys.map { category =>
         <ul>
           @products.filter(_.tags.contains(category)).filterNot(_.tags.contains("Featured")).take(5).map { product =>
             <li data-category="@category">
@@ -70,19 +70,14 @@
 
     <section id="blog">
 
-      <h2>Fresh news from <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">our blog</a></h2>
+      <h2>Fresh news from <a href="@routes.Application.blog()" target="_self">our blog</a></h2>
 
-      <a href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">
-
-        <h1>Strawberry Cheesecake Profiteroles</h1>
-
-        <p>
-          I know profiteroles are suppose to be stuffed with pastry cream, ice cream or some sort of cream. Okay, well cheesecake is made with cream cheese. That counts, right? And if doesn’t, what’s another broken rule? Let’s just agree that pate a choux whether in the form of profiteroles or eclairs is a vehichle for any type of stuffing.
-        </p>
-
+      <a href="@routes.Application.blog()" target="_self">
+        @blog.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h1>@title</h1> }
+        @blog.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
       </a>
 
-      <a class="more" href="@routes.Application.productDetail("UdUjsN_mqT1ObPeM", "coffee-macaron")">Read more</a>
+      <a class="more" href="@routes.Application.blog()" target="_self">Read more</a>
 
     </section>
 
