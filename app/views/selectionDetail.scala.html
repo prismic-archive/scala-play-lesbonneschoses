@@ -20,6 +20,14 @@
     
     <img src="@(selection.getImage("selection.image", "main").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
 
+    <div>
+      @selection.getHtml("selection.description", Application.LINK_RESOLVER).map(Html.apply)
+
+      <h4>
+        @selection.getNumber("selection.price", "$0.00").map { price =><em>@price</em>}
+      </h4>
+    </div>
+
   </section>
 
 }

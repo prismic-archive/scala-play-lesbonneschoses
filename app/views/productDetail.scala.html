@@ -33,7 +33,7 @@
 
   </section>
 
-  @product.getImage("product.gallery[0]", "main").map { img =>
+  @product.getImage("product.gallery", "main").map { img =>
     <section id="gallery" style="background-image: url(@img.url)"></section>
   }.getOrElse {
 
@@ -47,5 +47,7 @@
     }
 
   }
+
+  @product.getAll("product.related")
 
 }

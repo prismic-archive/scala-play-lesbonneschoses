@@ -467,16 +467,19 @@ html.no-js #home #caroussel .products ul li  {
   width: 1024px;
   margin: 60px auto;
   height: 435px;
+  text-align: centerl
 }
 
 #home #featured > div {
   position: relative;
   width: 334px;
   height: 415px;
-  margin-right: 11px;
+  margin-right: 5px;
   background: #f8f8f8;
-  float: left;
+  display: inline-block;
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 
@@ -971,6 +974,7 @@ html.no-js #home #caroussel .products ul li {
   height: 500px;
   width: 100%;
   display: table;
+  background-position: center;
 }
 
 #page-header > div > div {
@@ -1150,7 +1154,7 @@ html.no-js #home #caroussel .products ul li {
 #selection #page-body {
   height: 500px;
   position: relative;
-  width: 1024px;
+  width: 800px;
 }
 
 #selection #page-body img {
@@ -1158,7 +1162,28 @@ html.no-js #home #caroussel .products ul li {
   height: 400px;
   position: absolute;
   left: 0;
-  top: 50px;
+  top: 0;
+}
+
+#selection #page-body div {
+  display: table-cell;
+  padding-left: 450px;
+  vertical-align: middle;
+  height: 400px;
+}
+
+#selection #page-body div p {
+  font-size: .9em;
+}
+
+#selection #page-body div h4 em {
+  font-family: Serif;
+  font-style: italic;
+  color: #AAA;
+  font-size: 2em;
+  font-weight: normal;
+  position: relative;
+  top: -20px;
 }
 
 /* ==========================================================================
