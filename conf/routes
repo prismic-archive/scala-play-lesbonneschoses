@@ -13,6 +13,7 @@ GET     /stores                                             controllers.Applicat
 GET     /stores/$id<[-_a-zA-Z0-9]{16}>/:slug                controllers.Application.storeDetail(id, slug)
 
 GET     /blog                                               controllers.Application.blog(category: Option[String] ?= None)
+GET     /blog/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.blogPost(id, slug)
 
 GET     /products                                           controllers.Application.products
 GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.productDetail(id, slug)

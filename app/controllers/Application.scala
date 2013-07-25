@@ -180,6 +180,18 @@ object Application extends Controller {
     }
   }
 
+  def blogPost(id: String, slug: String) = Action.async {
+    for {
+      session <- SESSION
+      maybePost <- getDocument(session, session.master, id)
+    } yield {
+      checkSlug(maybePost, slug) {
+        case Left(newSlug) => MovedPermanently(routes.Application.blogPost(id, newSlug).url)
+        case Right(post) => Ok(views.html.post(post))        
+      }
+    }
+  }
+
   // -- Products
 
   val productCategories = collection.immutable.ListMap(

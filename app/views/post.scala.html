@@ -1,0 +1,15 @@
+@(post: io.prismic.Document)
+
+@blog(title = post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)) {
+  
+  <section id="post">
+    
+      <em class="infos">@post.getDate("blog-post.date", "MMMM dd, yyyy") @post.getText("blog-post.author").map { author => by @author }</em>
+      
+      <article>
+        @post.getHtml("blog-post.body", Application.LINK_RESOLVER).map(Html.apply)
+      </article>
+
+  </section>
+
+}

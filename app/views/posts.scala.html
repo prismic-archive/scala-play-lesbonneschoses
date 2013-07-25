@@ -1,15 +1,15 @@
 @(posts: Seq[io.prismic.Document])
 
-@blog() {
+@blog(title = Some("Our blog")) {
   
   <section id="posts">
     @posts.take(10).map { post =>
 
       <article>
-        <a href="#">
+        <a href="@routes.Application.blogPost(post.id, post.slug)">
+          <em class="infos">@post.getDate("blog-post.date", "MMMM dd, yyyy") @post.getText("blog-post.author").map { author => by @author }</em>
           @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h2>@title</h2> }
-          <em>@post.getDate("blog-post.date", "MMMM dd, yyyy") @post.getText("blog-post.author").map { author => by @author }</em>
-
+          
           @post.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
 
           <div @post.getImage("blog-post.body", "main").map { img => style="background-image: url(@img.url); background-size: cover;" }></div>

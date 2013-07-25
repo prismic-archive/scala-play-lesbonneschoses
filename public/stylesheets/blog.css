@@ -100,6 +100,7 @@ h5 {
 html,
 body {
   max-width: 1440px;
+  min-width: 1024px;
   margin: 0 auto;
   padding: 0;
   background: #fff;
@@ -172,7 +173,7 @@ div.main {
 
 #posts article {
   border-bottom: 1px solid #DDD;
-  padding: 35px 335px 35px 35px;
+  padding: 30px 340px 30px 40px;
   position: relative;
 }
 
@@ -187,15 +188,15 @@ div.main {
 }
 
 #posts article h2 {
-  margin: 0;
+  margin: 5px 0 0 0;
   font-size: 1.8em;
   line-height: 1em;
 }
 
-#posts article em {
+#posts article .infos {
   color: #bbb;
   font-style: normal;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 #posts article p {
@@ -244,6 +245,75 @@ div.main {
 #posts article a strong:hover {
   background: #f8f8f8
 }
+
+/* ==========================================================================
+   Post detail
+   ========================================================================== */
+
+#post {
+  padding: 30px 340px 30px 40px;
+  position: relative;
+}
+
+#post .infos {
+  color: #bbb;
+  font-style: normal;
+  font-size: 0.8em;
+}
+
+#post h1:first-child,
+#post h2:first-child,
+#post h3:first-child {
+  margin-top: 0;
+}
+
+#post article {
+  width: 640px;
+  font-size: .95em;
+  text-align: justify;
+  margin-bottom: 50px;
+}
+
+#post h1 {
+  font-size: 2.8em;
+}
+
+#post h2 {
+  font-size: 2em;
+}
+
+#post h3 {
+  font-size: 1.5em;
+}
+
+#post a {
+  color: #111;
+}
+
+#post img {
+  margin: 40px 0;
+}
+
+#post h1 + p > img,
+#post h2 + p > img,
+#post h3 + p > img {
+  margin-top: 0;
+}
+
+#post [data-oembed] {
+  margin: 40px 0;
+}
+
+#post h1 + [data-oembed],
+#post h2 + [data-oembed],
+#post h3 + [data-oembed] {
+  margin-top: 0;
+}
+
+#post [data-oembed] > iframe {
+  width: 640px;
+}
+
 
 /* ==========================================================================
    Media Queries

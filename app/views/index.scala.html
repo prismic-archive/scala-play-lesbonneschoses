@@ -66,18 +66,18 @@
 
   </section>
 
-  @featured.filter(_.typ == "blog-post").headOption.map { blog =>
+  @featured.filter(_.typ == "blog-post").headOption.map { post =>
 
     <section id="blog">
 
       <h2>Fresh news from <a href="@routes.Application.blog()" target="_self">our blog</a></h2>
 
-      <a href="@routes.Application.blog()" target="_self">
-        @blog.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h1>@title</h1> }
-        @blog.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
+      <a href="@routes.Application.blogPost(post.id, post.slug)" target="_self">
+        @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h1>@title</h1> }
+        @post.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
       </a>
 
-      <a class="more" href="@routes.Application.blog()" target="_self">Read more</a>
+      <a class="more" href="@routes.Application.blogPost(post.id, post.slug)" target="_self">Read more</a>
 
     </section>
 
