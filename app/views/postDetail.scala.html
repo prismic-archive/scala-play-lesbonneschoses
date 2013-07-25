@@ -12,7 +12,7 @@
 
       @Option(relatedPosts).filterNot(_.isEmpty).map { posts =>
 
-        <h2>This should interest you too</h2>
+        <h2>@(posts.size match { case 1 => "This" case _ => "These" }) should interest you too</h2>
 
         <ul>
           @posts.map { post =>

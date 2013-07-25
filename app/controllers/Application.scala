@@ -193,7 +193,7 @@ object Application extends Controller {
     } yield {
       checkSlug(maybePost, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.blogPost(id, newSlug).url)
-        case Right(post) => Ok(views.html.post(post, relatedProducts, relatedPosts))        
+        case Right(post) => Ok(views.html.postDetail(post, relatedProducts, relatedPosts))        
       }
     }
   }

@@ -1,6 +1,54 @@
 @(store: io.prismic.Document)
 
-@page(id = "stores")(title = store.getText("store.name"), image = store.getImage("store.image", "main").map(_.url)) {
+@page(id = "store")(
+  title = store.getText("store.name"), 
+  catcher = store.getHtml("store.description", Application.LINK_RESOLVER).map(Html.apply),
+  image = store.getImage("store.image", "main").map(_.url)) {
 
+  <div id="map-canvas" style="width:400px; height: 300px"></div>
+
+  <p class="address">
+    @store.getText("store.address").map { txt => @txt<br> }
+    @store.getText("store.address2").map { txt => @txt<br> }
+    @store.getText("store.city").map { txt => @txt }
+    @store.getText("store.zipcode").map { txt => @txt<br> }
+    @store.getText("store.country")
+  </p>  
+
+  <aside>
+
+    <h4>Opening times</h4>
+
+    <dl>
+      <dt>Monday</dt>
+      <dd>@store.getText("store.monday")</dd>
+    </dl>
+    <dl>
+      <dt>Tuesday</dt>
+      <dd>@store.getText("store.tuesday")</dd>
+    </dl>
+    <dl>
+      <dt>Wednesday</dt>
+      <dd>@store.getText("store.wednesday")</dd>
+    </dl>
+    <dl>
+      <dt>Thursday</dt>
+      <dd>@store.getText("store.thursday")</dd>
+    </dl>
+    <dl>
+      <dt>Friday</dt>
+      <dd>@store.getText("store.friday")</dd>
+    </dl>
+    <dl>
+      <dt>Saturday</dt>
+      <dd>@store.getText("store.saturday")</dd>
+    </dl>
+    <dl>
+      <dt>Sunday</dt>
+      <dd>@store.getText("store.sunday")</dd>
+    </dl>
+
+
+  </aside>
 
 }

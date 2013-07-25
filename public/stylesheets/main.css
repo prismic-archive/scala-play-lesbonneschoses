@@ -1015,7 +1015,7 @@ html.no-js #home #caroussel .products ul li {
 }
 
 #page-header > div > div {
-  background: rgba(0,0,0,.2);
+  background: rgba(0,0,0,.3);
   padding-bottom: 100px;
   height: 400px;
   width: 100%;
@@ -1100,6 +1100,60 @@ html.no-js #home #caroussel .products ul li {
 #stores #page-body article a:hover h3::after {
   width: 160px !important;
 }
+
+/* ==========================================================================
+   Store detail
+   ========================================================================== */
+
+#store #page-header {
+  height: 300px;
+}
+
+#store #page-header div {
+  height: 250px;
+}
+
+#store #page-body {
+  position: relative;
+}
+
+#store #page-body p.address {
+  width: 400px;
+  font-size: 0.9em;
+}
+
+#store aside {
+  position: absolute;
+  top: 0;
+  left: 500px;
+  text-align: left;
+}
+
+#store aside h4 {
+  font-size: 1.8em;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+#store aside dl {
+  margin: 0;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+#store aside dl:last-child {
+  border-bottom: 0;
+}
+
+#store aside dt,
+#store aside dd {
+  display: inline-block;
+}
+
+#store aside dt {
+  width: 150px;
+}
+
 
 /* ==========================================================================
    Jobs
@@ -1297,6 +1351,10 @@ div.main.fade > section:not(:first-child)  {
 
 [data-to=stores] > section {
   height: 500px !important;
+}
+
+[data-to=store] > section {
+  height: 300px !important;
 }
 
 [data-to=jobs] > section {

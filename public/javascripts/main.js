@@ -13,6 +13,50 @@ $(function() {
       $('#catalog').css('height', (Math.ceil($('#catalog ul li').size() / 5) + 1) * 200 + 170)
     },
 
+    'store': function() {
+      var address = $('#store p.address').text()
+
+      if(address) {
+        new google.maps.Geocoder().geocode({'address': address}, function(results, status) {
+          if(results && results[0]) {
+
+            var location = results[0].geometry.location
+
+            var mapOptions = {
+              center: location,
+              zoom: 16,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+
+            var map = new google.maps.Map(
+              document.getElementById("map-canvas"),
+              mapOptions
+            )
+
+            map.setOptions({styles: [
+              {
+                "featureType": "poi",
+                "stylers": [
+                  { "saturation": -100 },
+                  { "visibility": "off" }
+                ]
+              },{
+                "stylers": [
+                  { "saturation": -100 }
+                ]
+              }
+            ]})
+
+            var marker = new google.maps.Marker({
+                position: results[0].geometry.location,
+                map: map,
+                title: 'Les Bonnes Choses'
+            })
+          }
+        })
+      }
+    },
+
     init: function() {
       (this[$('body > div.main').attr('id')] || (function() {}))()
     }
