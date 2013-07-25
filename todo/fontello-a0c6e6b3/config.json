@@ -2,6 +2,7 @@
   "name": "",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
+  "hinting": true,
   "glyphs": [
     {
       "uid": "474656633f79ea2f1dad59ff63f6bf07",
@@ -13,6 +14,12 @@
       "uid": "7222571caa5c15f83dcfd447c58d68d9",
       "css": "search",
       "code": 59393,
+      "src": "entypo"
+    },
+    {
+      "uid": "9e67bfab0143d9511f8eef6897caeb88",
+      "css": "right",
+      "code": 59396,
       "src": "entypo"
     },
     {

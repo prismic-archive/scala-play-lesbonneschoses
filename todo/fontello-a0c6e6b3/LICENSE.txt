@@ -19,15 +19,6 @@ Font license info
    Homepage:  http://www.justbenicestudio.com/
 
 
-## Elusive
-
-   Copyright (C) 2013 by Aristeides Stathopoulos
-
-   Author:    Aristeides Stathopoulos
-   License:   SIL (http://scripts.sil.org/OFL)
-   Homepage:  http://aristeides.com/
-
-
 ## Entypo
 
    Copyright (C) 2012 by Daniel Bruce
@@ -35,5 +26,14 @@ Font license info
    Author:    Daniel Bruce
    License:   CC BY-SA (http://creativecommons.org/licenses/by-sa/2.0/)
    Homepage:  http://www.entypo.com
+
+
+## Elusive
+
+   Copyright (C) 2013 by Aristeides Stathopoulos
+
+   Author:    Aristeides Stathopoulos
+   License:   SIL (http://scripts.sil.org/OFL)
+   Homepage:  http://aristeides.com/
 
 

@@ -101,7 +101,7 @@ html,
 body {
   max-width: 1440px;
   min-width: 1024px;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   background: #fff;
   overflow-x: hidden; 
@@ -165,15 +165,20 @@ header nav ul a:hover {
 
 div.main {
   margin-left: 300px;
+  position: relative;
 }
 
 /* ==========================================================================
    List posts
    ========================================================================== */
 
+#posts {
+  overflow: hidden;
+}
+
 #posts article {
   border-bottom: 1px solid #DDD;
-  padding: 30px 340px 30px 40px;
+  padding: 30px 380px 30px 40px;
   position: relative;
 }
 
@@ -314,12 +319,116 @@ div.main {
   width: 640px;
 }
 
+#post > h2 {
+  border-top: 3px solid #eee;
+  margin-top: 40px;
+  padding-top: 15px;
+  font-size: 1.5em;
+  color: #888;
+  width: 640px;
+}
+
+#post > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#post > ul li {
+  padding: 3px 0;
+}
+
+#post > ul li::before {
+  content: '\e804';
+  font-family: 'Fontello';
+  margin-right: 5px;
+  color: #ccc;
+}
+
+aside {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 310px;
+  min-height: 200px;
+  text-align: center;
+  padding: 45px 45px;
+}
+
+aside h2 {
+  font-size: 1.5em;
+  margin: 10px auto 20px auto;
+  width: 180px;
+  color: #888;
+}
+
+aside ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+aside li {
+  border: 2px solid #eee;
+  width: 160px;
+  margin: 8px auto;
+  display: block;
+  padding: 10px 0;
+  transition: .25s;
+}
+
+aside li:hover {
+  background: #fcfcfc;
+}
+
+aside ul img {
+  display: block;
+  margin: 0 auto;
+  width: 100px;
+}
+
+aside li a {
+  text-decoration: none;
+  color: inherit;
+}
+
+aside li span {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.8em;
+  color: #aaa;
+}
+
 
 /* ==========================================================================
    Media Queries
    ========================================================================== */
 
-@media only screen and (min-width: 35em) {
+@media only screen and (max-width: 1300px) {
+
+  header {
+    width: 250px;
+  }
+
+  div.main {
+    margin-left: 250px;
+  }
+
+}
+
+@media only screen and (max-width: 1250px) {
+
+  aside {
+    display: none;
+  }
+
+  #posts article {
+    padding-right: 210px;
+  }
+
+  #posts article div {
+    width: 180px;
+  }
 
 }
 

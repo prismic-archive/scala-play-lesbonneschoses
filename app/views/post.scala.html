@@ -1,4 +1,4 @@
-@(post: io.prismic.Document)
+@(post: io.prismic.Document, relatedProducts: Seq[io.prismic.Document], relatedPosts: Seq[io.prismic.Document])(implicit requestHeader: RequestHeader)
 
 @blog(title = post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)) {
   
@@ -10,6 +10,60 @@
         @post.getHtml("blog-post.body", Application.LINK_RESOLVER).map(Html.apply)
       </article>
 
+      @Option(relatedPosts).filterNot(_.isEmpty).map { posts =>
+
+        <h2>This should interest you too</h2>
+
+        <ul>
+          @posts.map { post =>
+            @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title =>
+              <li>
+                <a href="@routes.Application.blogPost(post.id, post.slug)">@title</a>
+              </li>
+            }
+          }
+        </ul>
+
+      }
+
+      @if(post.getBoolean("blog-post.allow_comments")) {
+
+        <h2>Comments</h2>
+
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+        <div class="fb-comments" data-href="@routes.Application.blogPost(post.id, post.slug).absoluteURL()" data-width="640" data-num-posts="10"></div>
+
+      }
+
   </section>
+
+  <aside>
+
+    @Option(relatedProducts).filterNot(_.isEmpty).map { products =>
+
+      <h2>Some pastries you should love</h2>
+
+      <ul>
+        @products.map { product =>
+          <li data-category="@product.tags.filter(Application.productCategories.contains).headOption">
+            <a href="@routes.Application.productDetail(product.id, product.slug)">
+              <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
+              <span>@product.getText("product.name").getOrElse("Product")</span>
+            </a>
+          </li>
+        }
+      </ul>
+
+    }
+
+  </aside>
 
 }
