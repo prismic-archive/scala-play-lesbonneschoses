@@ -27,8 +27,13 @@ object Application extends Controller {
     case Fragment.DocumentLink(id, "store", _, slug, _, false)      => LinkDestination(url = routes.Application.storeDetail(id, slug).url)
     case Fragment.DocumentLink(id, "product", _, slug, _, false)    => LinkDestination(url = routes.Application.productDetail(id, slug).url)
     case Fragment.DocumentLink(id, "job-offer", _, slug, _, false)  => LinkDestination(url = routes.Application.jobDetail(id, slug).url)
+    case Fragment.DocumentLink(id, "blog-post", _, slug, _, false)       => LinkDestination(url = routes.Application.blogPost(id, slug).url, target = Some("_self"))
     case anyOtherLink                                               => LinkDestination(url = routes.Application.brokenLink().url)
   }
+
+  def LinkToDocument(session: Api, doc: Document): LinkDestination = LINK_RESOLVER(
+    Fragment.DocumentLink(doc.id, doc.typ, doc.tags, doc.slug, session.bookmarks.find(_._2 == doc.id).map(_._1), false)
+  )
 
   // -- Helpers
 
@@ -239,6 +244,26 @@ object Application extends Controller {
         PageNotFound
       } else {
         Ok(views.html.productsByFlavour(flavour, products))
+      }
+    }
+  }
+
+  // -- Search
+
+  def search(query: Option[String]) = Action.async { implicit request =>
+    query.map(_.trim).filterNot(_.isEmpty).map { q =>
+      for {
+        session <- SESSION
+        products <- session.forms("everything").query(s"""[[any(document.type, ["product", "selection"])][fulltext(document, "$q")]]""").ref(session.master).submit()
+        others <- session.forms("everything").query(s"""[[any(document.type, ["article", "blog-post", "job-offer", "store"])][fulltext(document, "$q")]]""").ref(session.master).submit()
+      } yield {
+        Ok(views.html.search(LinkToDocument(session, _), query, products, others))
+      }
+    }.getOrElse {
+      for {
+        session <- SESSION
+      } yield {
+         Ok(views.html.search(LinkToDocument(session, _)))
       }
     }
   }

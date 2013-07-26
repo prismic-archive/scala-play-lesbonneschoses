@@ -24,12 +24,15 @@
 
         <ul>
           <li><a href="@routes.Application.about()" @if(id == "about") { class="selected" }>About</a></li>
-          <li><a href="@routes.Application.stores()" @if(id == "stores") { class="selected" }>Stores</a></li>
+          <li><a href="@routes.Application.stores()" @if(id == "stores" || id == "store") { class="selected" }>Stores</a></li>
         </ul>
         <ul>
           <li><a href="@routes.Application.jobs()" @if(id == "jobs" || id == "job") { class="selected" }>Jobs</a></li>
           <li><a href="@routes.Application.blog()" @if(id == "blog") { class="selected" } target="_self">Our Blog</a></li>
         </ul>
+
+        <a href="@routes.Application.search()"><span>Search</span></a>
+
       </nav>
     </header>
 

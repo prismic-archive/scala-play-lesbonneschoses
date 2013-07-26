@@ -200,6 +200,32 @@ header nav ul:last-of-type {
   top: 0px;
 }
 
+header nav > a {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 70px;
+  width: 70px;
+  text-align: center;
+  transition: .25s;
+}
+
+header nav > a:hover::before {
+  color: #222;
+}
+
+header nav > a span {
+  display: none;
+}
+
+header nav > a::before {
+  content: '\e801';
+  font-family: 'Fontello';
+  line-height: 70px;
+  color: #aaa;
+  transition: .25s;
+}
+
 div.main {
   min-height: 800px;
 }
@@ -354,6 +380,7 @@ html.no-js #home #caroussel .products ul li  {
 
 .products ul li img {
   width: 150px;
+  height: 150px;
   margin: auto;
   margin-bottom: 10px;
   display: block;
@@ -362,16 +389,19 @@ html.no-js #home #caroussel .products ul li  {
 
 [data-category="Macaron"] img {
   width: 140px !important;
+  height: 140px !important;
   margin-top: 10px !important;
 }
 
 [data-category="Pie"] img {
   width: 170px !important;
+  height: 170px !important;
   margin-top: -20px !important;
 }
 
 [data-category="Cupcake"] img {
   width: 180px !important;
+  height: 180px !important;
   margin-top: -30px !important;
 }
 
@@ -1314,6 +1344,164 @@ html.no-js #home #caroussel .products ul li {
 }
 
 /* ==========================================================================
+   Search
+   ========================================================================== */
+
+#search > section:first-child {
+  height: 250px;
+  background: #f8f8f8;
+  padding-top: 125px;
+}
+
+#search > section:first-child form {
+  position: relative;
+  display: block;
+  width: 730px;
+  margin: auto;
+}
+
+#search > section:first-child input[type=text] {
+  border: none;
+  width: 700px;
+  font-size: 24px;
+  padding: 15px;
+  outline: none;
+  font-weight: 100;
+  height: 30px;
+}
+
+#search > section:first-child form::before {
+  content: '\e804';
+  font-family: 'Fontello';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  display: block;
+  text-align: center;
+  line-height: 60px;
+  font-size: 20px;
+  color: #888;
+}
+
+#search > section:first-child input[type=submit] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  background: rgba(255,255,255,.7);
+  font-size: 0;
+  border: none;
+  outline: none;
+  transition: .25s;
+}
+
+#search > section:first-child input[type=submit]:hover {
+  background: rgba(255,255,255,0);
+}
+
+#search #product-results {
+  width: 800px;
+  margin-bottom: 60px;
+}
+
+#search #product-results h2 {
+  text-align: center;
+  font-size: 2em;
+}
+
+#search #product-results li {
+  background: none;
+  border: 2px solid #EEE;
+  width: 150px;
+  height: 150px;
+  margin: 8px 5px;
+  display: inline-block;
+  padding: 15px 10px;
+  transition: .25s;
+  vertical-align: top;
+}
+
+#search #product-results li:hover {
+  background: #fcfcfc;
+}
+
+#search #product-results li img {
+  -webkit-transform: none !important;
+  width: 100px !important;
+  height: 100px !important;
+}
+
+#search #product-results li span {
+  opacity: 1;
+  color: #aaa;
+  text-transform: initial;
+}
+
+#search #other-results {
+  width: 800px;
+  text-align: center;
+  margin: auto;
+  margin-bottom: 60px;
+}
+
+#search #other-results h2 {
+  text-align: center;
+  font-size: 2em;
+}
+
+#search #other-results a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#search #other-results a h3 {
+  margin-bottom: 0;
+  font-size: 1.5em;
+}
+
+#search #other-results a em {
+  display: block;
+  color: #aaa;
+  font-style: normal;
+  font-size: .8em;
+  margin-bottom: 10px;
+}
+
+#search #other-results a p {
+  font-size: .9em;
+}
+
+#search #other-results article::before {
+  content: '';
+  display: block;
+  width: 150px;
+  height: 3px;
+  background: #eee;
+  margin: 30px auto;
+}
+
+#search #no-results {
+  width: 800px;
+  text-align: center;
+  margin: auto;
+  margin-bottom: 60px;
+}
+
+#search #no-results h2 {
+  text-align: center;
+  font-size: 2em;
+}
+
+#search #no-results p a {
+  color: inherit;
+}
+
+
+/* ==========================================================================
    Page transitions
    ========================================================================== */
 
@@ -1367,6 +1555,10 @@ div.main.fade > section:not(:first-child)  {
 
 [data-to=selection] > section {
   height: 300px !important;
+}
+
+[data-to=search] > section {
+  height: 250px !important;
 }
 
 /* ==========================================================================

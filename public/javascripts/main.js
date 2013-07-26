@@ -13,6 +13,10 @@ $(function() {
       $('#catalog').css('height', (Math.ceil($('#catalog ul li').size() / 5) + 1) * 200 + 170)
     },
 
+    'search': function() {
+      $('input[name=query]').filter(function() { return !$(this).val() }).focus()
+    },
+
     'store': function() {
       var address = $('#store p.address').text()
 
@@ -111,6 +115,20 @@ $(function() {
 
       var href = $(this).attr('href')
       if(href[0] == '#') return $.when('DONE')
+
+      history.pushState(null, null, href)
+      url = document.location.toString()
+
+      load(href)
+    })
+
+    // Intercept form submits
+    $(document.body).on('submit', 'form[method=GET]', function(e) {
+      e.preventDefault()
+
+      var action = $(this).attr('action'),
+          data = $(this).serialize()
+          href = action + '?' + data
 
       history.pushState(null, null, href)
       url = document.location.toString()

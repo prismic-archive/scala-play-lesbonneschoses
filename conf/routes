@@ -21,6 +21,8 @@ GET     /products/by-flavour                                controllers.Applicat
 
 GET     /selections/$id<[-_a-zA-Z0-9]{16}>/:slug            controllers.Application.selectionDetail(id, slug)
 
+GET     /search                                             controllers.Application.search(query: Option[String] ?= None)
+
 GET     /not-found                                          controllers.Application.brokenLink()
 
 # Map static resources from the /public folder to the /assets URL path

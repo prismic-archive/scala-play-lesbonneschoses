@@ -1,0 +1,133 @@
+@(linker: (io.prismic.Document => io.prismic.LinkDestination), query: Option[String] = None, products: Seq[io.prismic.Document] = Nil, others: Seq[io.prismic.Document] = Nil)(implicit request: RequestHeader)
+
+@excerpt(text: String, words: Int = 50) = @{
+  val truncated = text.take(words * 10).split("""\s""").dropRight(1).take(words).mkString(" ")
+  truncated + (if(truncated != text) "..." else "")
+}
+
+@main(id = "search", title = Some("Search")) {
+
+  <section>
+
+    <form action="@routes.Application.search()" method="GET">
+      <input type="text" name="query" placeholder="Search anything" value="@query" autocomplete="off">
+      <input type="submit" value="Submit">
+    </form>
+
+  </section>
+
+  <section>
+
+    @Option(products).filterNot(_.isEmpty).map { products =>
+
+      <div id="product-results" class="products">
+
+        <h2>We have @(products.size match {case 1 => "one product" case x => s"$x products"}) matching your request</h2>
+
+        <ul>
+          @products.map {
+
+            case product if product.typ == "product" => {
+              <li>
+                <a href="@routes.Application.productDetail(product.id, product.slug)">
+                  <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
+                  <span>@product.getText("product.name").getOrElse("Product")</span>
+                </a>
+              </li>
+            }
+
+            case selection if selection.typ == "selection" => {
+              <li>
+                <a href="@routes.Application.selectionDetail(selection.id, selection.slug)">
+                  <img src="@(selection.getImage("selection.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
+                  <span>@selection.getText("selection.name").getOrElse("Product selection")</span>
+                </a>
+              </li>
+            }
+
+          }
+        </ul>
+
+      </div>
+
+    }
+
+    @Option(others).filterNot(_.isEmpty).map { others =>
+
+      <div id="other-results">
+
+        <h2>@(others.size match {case 1 => "One relevant article" case x => s"$x relevant articles"}) in our Website</h2>
+
+        @others.map {
+
+          case article if article.typ == "article" => {
+            <article>
+              <a href="@linker(article).url">
+                <h3>@article.getText("article.title")</h3>
+                <em>@request.host@linker(article).url</em>
+                <p>@excerpt(article.getText("article.content").getOrElse(""))</p>
+              </a>
+            </article>
+          }
+
+          case store if store.typ == "store" => {
+            <article>
+              <a href="@linker(store).url">
+                <h3>Les Bonnes Choses Store – @store.getText("store.name")</h3>
+                <em>@request.host@linker(store).url</em>
+                <p>
+                  @store.getText("store.address")
+                  @store.getText("store.address2")
+                  @store.getText("store.city")
+                  @store.getText("store.zipcode")
+                  @store.getText("store.country")
+                </p>
+              </a>
+            </article>
+          }
+
+          case job if job.typ == "job-offer" => {
+            <article>
+              <a href="@linker(job).url">
+                <h3>Join us – @job.getText("job-offer.name")</h3>
+                <em>@request.host@linker(job).url</em>
+                <p>@excerpt(job.getText("job-offer.profile").getOrElse(""))</p>
+              </a>
+            </article>
+          }
+
+          case blog if blog.typ == "blog-post" => {
+            <article>
+              <a href="@linker(blog).url" target="_self">
+                <h3>In our blog – @blog.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)</h3>
+                <em>@request.host@linker(blog).url</em>
+                <p>@excerpt(blog.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).getOrElse(""))</p>
+              </a>
+            </article>
+          }
+
+          case _ => { <p>?</p> }
+
+        }
+
+      </div>
+
+    }
+
+    @if(products.isEmpty && others.isEmpty) {
+
+      <div id="no-results">
+
+        <h2>No results found</h2>
+
+        <p>
+          Do you want to browse our <a href="@routes.Application.products()">products catalog</a>?
+        </p>
+
+      </div>
+
+    }
+
+  </section>
+
+}
