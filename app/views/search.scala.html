@@ -114,17 +114,21 @@
 
     }
 
-    @if(products.isEmpty && others.isEmpty) {
+    @query.map { 
 
-      <div id="no-results">
+      case query if products.isEmpty && others.isEmpty => {
+        <div id="no-results">
 
-        <h2>No results found</h2>
+          <h2>No results found</h2>
 
-        <p>
-          Do you want to browse our <a href="@routes.Application.products()">products catalog</a>?
-        </p>
+          <p>
+            Do you want to browse our <a href="@routes.Application.products()">products catalog</a>?
+          </p>
 
-      </div>
+        </div>
+      }
+
+      case _ => {}
 
     }
 
