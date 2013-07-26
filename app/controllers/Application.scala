@@ -16,53 +16,47 @@ object Application extends Controller {
 
   // -- API
 
-  val CACHE = BuiltInCache(200)
+  private val Cache = BuiltInCache(200)
 
-  def SESSION = Api.get(Play.configuration.getString("prismic.api").getOrElse(sys.error("Missing configuration [prismic.api]")), cache = CACHE)
-
-  val LINK_RESOLVER: LinkResolver = { 
-    case Fragment.DocumentLink(_, _, _, _, Some("about"), _)        => LinkDestination(url = routes.Application.about().url)
-    case Fragment.DocumentLink(_, _, _, _, Some("jobs"), _)         => LinkDestination(url = routes.Application.jobs().url)
-    case Fragment.DocumentLink(_, _, _, _, Some("stores"), _)       => LinkDestination(url = routes.Application.stores().url)
-    case Fragment.DocumentLink(id, "store", _, slug, _, false)      => LinkDestination(url = routes.Application.storeDetail(id, slug).url)
-    case Fragment.DocumentLink(id, "product", _, slug, _, false)    => LinkDestination(url = routes.Application.productDetail(id, slug).url)
-    case Fragment.DocumentLink(id, "job-offer", _, slug, _, false)  => LinkDestination(url = routes.Application.jobDetail(id, slug).url)
-    case Fragment.DocumentLink(id, "blog-post", _, slug, _, false)       => LinkDestination(url = routes.Application.blogPost(id, slug).url, target = Some("_self"))
-    case anyOtherLink                                               => LinkDestination(url = routes.Application.brokenLink().url)
-  }
-
-  def LinkToDocument(session: Api, doc: Document): LinkDestination = LINK_RESOLVER(
-    Fragment.DocumentLink(doc.id, doc.typ, doc.tags, doc.slug, session.bookmarks.find(_._2 == doc.id).map(_._1), false)
-  )
+  def apiHome = Api.get(Play.configuration.getString("prismic.api").getOrElse(sys.error("Missing configuration [prismic.api]")), cache = Cache)
 
   // -- Helpers
 
-  val PageNotFound = NotFound("OOPS")
-
-  def brokenLink = Action {
-    PageNotFound
+  def linkResolver(api: Api)(implicit request: RequestHeader) = DocumentLinkResolver(api) { 
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("about"))          => routes.Application.about().absoluteURL()
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("jobs"))           => routes.Application.jobs().absoluteURL()
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("stores"))         => routes.Application.stores().absoluteURL()
+    case (Fragment.DocumentLink(id, "store", _, slug, false), _)        => routes.Application.storeDetail(id, slug).absoluteURL()
+    case (Fragment.DocumentLink(id, "product", _, slug, false), _)      => routes.Application.productDetail(id, slug).absoluteURL()
+    case (Fragment.DocumentLink(id, "job-offer", _, slug, false), _)    => routes.Application.jobDetail(id, slug).absoluteURL()
+    case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _)    => routes.Application.blogPost(id, slug).absoluteURL()
+    case anyOtherLink                                                   => routes.Application.brokenLink().absoluteURL()
   }
 
-  def getBookmark(session: Api, ref: Ref, bookmark: String): Future[Option[Document]] = {
-    session.bookmarks.get(bookmark).map { id =>
-      getDocument(session, ref, id)
+  val PageNotFound = NotFound(views.html.pageNotFound())
+
+  def brokenLink = Action(PageNotFound)
+
+  def getBookmark(api: Api, ref: Ref, bookmark: String): Future[Option[Document]] = {
+    api.bookmarks.get(bookmark).map { id =>
+      getDocument(api, ref, id)
     }.getOrElse {
       Future.successful(None)
     }
   }
 
-  def getDocument(session: Api, ref: Ref, id: String): Future[Option[Document]] = {
+  def getDocument(api: Api, ref: Ref, id: String): Future[Option[Document]] = {
     for {
-      documents <- session.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ref).submit()
+      documents <- api.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ref).submit()
     } yield {
       documents.headOption
     }
   }
 
-  def getDocuments(session: Api, ref: Ref, ids: String*): Future[Seq[Document]] = {
+  def getDocuments(api: Api, ref: Ref, ids: String*): Future[Seq[Document]] = {
     ids match {
       case Nil => Future.successful(Nil)
-      case ids => session.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ref).submit()
+      case ids => api.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ref).submit()
     }
   }
 
@@ -79,9 +73,9 @@ object Application extends Controller {
 
   def index = Action.async {
     for {
-      session <- SESSION
-      products <- session.forms("products").ref(session.master).submit()
-      featured <- session.forms("featured").ref(session.master).submit()
+      api <- apiHome
+      products <- api.forms("products").ref(api.master).submit()
+      featured <- api.forms("featured").ref(api.master).submit()
     } yield {
       Ok(views.html.index(products, featured))
     }
@@ -89,37 +83,37 @@ object Application extends Controller {
 
   // -- About us
 
-  def about = Action.async {
+  def about = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybePage <- getBookmark(session, session.master, "about")
+      api <- apiHome
+      maybePage <- getBookmark(api, api.master, "about")
     } yield {
-      maybePage.map(page => Ok(views.html.about(page))).getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.about(page)(linkResolver(api)))).getOrElse(PageNotFound)
     }
   }
 
   // -- Jobs
 
-  def jobs = Action.async {
+  def jobs = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybePage <- getBookmark(session, session.master, "jobs")
-      jobs <- session.forms("jobs").ref(session.master).submit()
+      api <- apiHome
+      maybePage <- getBookmark(api, api.master, "jobs")
+      jobs <- api.forms("jobs").ref(api.master).submit()
     } yield {
-      maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.jobs(page, jobs)(linkResolver(api)))).getOrElse(PageNotFound)
     }
   }
 
-  def jobDetail(id: String, slug: String) = Action.async {
+  def jobDetail(id: String, slug: String) = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybePage <- getBookmark(session, session.master, "jobs")
-      maybeJob <- getDocument(session, session.master, id)
+      api <- apiHome
+      maybePage <- getBookmark(api, api.master, "jobs")
+      maybeJob <- getDocument(api, api.master, id)
     } yield {
       checkSlug(maybeJob, slug) { 
         case Left(newSlug) => MovedPermanently(routes.Application.jobDetail(id, newSlug).url)
         case Right(job) => maybePage.map { page =>
-          Ok(views.html.jobDetail(page, job))
+          Ok(views.html.jobDetail(page, job)(linkResolver(api)))
         }.getOrElse(PageNotFound) 
       }
     }
@@ -127,48 +121,48 @@ object Application extends Controller {
 
   // -- Stores
 
-  def stores = Action.async {
+  def stores = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybePage <- getBookmark(session, session.master, "stores")
-      stores <- session.forms("stores").ref(session.master).submit()
+      api <- apiHome
+      maybePage <- getBookmark(api, api.master, "stores")
+      stores <- api.forms("stores").ref(api.master).submit()
     } yield {
-      maybePage.map(page => Ok(views.html.stores(page, stores))).getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.stores(page, stores)(linkResolver(api)))).getOrElse(PageNotFound)
     }
   }
 
-  def storeDetail(id: String, slug: String) = Action.async {
+  def storeDetail(id: String, slug: String) = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybeStore <- getDocument(session, session.master, id)
+      api <- apiHome
+      maybeStore <- getDocument(api, api.master, id)
     } yield {
       checkSlug(maybeStore, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.storeDetail(id, newSlug).url)
-        case Right(store) => Ok(views.html.storeDetail(store))
+        case Right(store) => Ok(views.html.storeDetail(store)(linkResolver(api)))
       }
     }
   }
 
   // -- Selections
 
-  def selectionDetail(id: String, slug: String) = Action.async {
+  def selectionDetail(id: String, slug: String) = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybeSelection <- getDocument(session, session.master, id)
-      products <- getDocuments(session, session.master, maybeSelection.map(_.getAll("selection.product").collect {
-        case Fragment.DocumentLink(id, "product", _, _, _, false) => id
+      api <- apiHome
+      maybeSelection <- getDocument(api, api.master, id)
+      products <- getDocuments(api, api.master, maybeSelection.map(_.getAll("selection.product").collect {
+        case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
       checkSlug(maybeSelection, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.selectionDetail(id, newSlug).url)
-        case Right(selection) => Ok(views.html.selectionDetail(selection, products))
+        case Right(selection) => Ok(views.html.selectionDetail(selection, products)(linkResolver(api)))
       }
     }
   }
 
   // -- Blog
 
-  val blogCategories = List(
+  val BlogCategories = List(
      "Announcements", 
      "Do it yourself", 
      "Behind the scenes"
@@ -176,10 +170,10 @@ object Application extends Controller {
 
   def blog(maybeCategory: Option[String]) = Action.async {
     for {
-      session <- SESSION
+      api <- apiHome
       posts <- maybeCategory.map(
-        category => session.forms("blog").query(s"""[[at(my.blog-post.category, "$category")]]""")
-      ).getOrElse(session.forms("blog")).ref(session.master).submit()
+        category => api.forms("blog").query(s"""[[at(my.blog-post.category, "$category")]]""")
+      ).getOrElse(api.forms("blog")).ref(api.master).submit()
     } yield {
       Ok(views.html.posts(posts.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
     }
@@ -187,25 +181,25 @@ object Application extends Controller {
 
   def blogPost(id: String, slug: String) = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybePost <- getDocument(session, session.master, id)
-      relatedProducts <- getDocuments(session, session.master, maybePost.map(_.getAll("blog-post.relatedproduct").collect {
-        case Fragment.DocumentLink(id, "product", _, _, _, false) => id
+      api <- apiHome
+      maybePost <- getDocument(api, api.master, id)
+      relatedProducts <- getDocuments(api, api.master, maybePost.map(_.getAll("blog-post.relatedproduct").collect {
+        case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
-      relatedPosts <- getDocuments(session, session.master, maybePost.map(_.getAll("blog-post.relatedpost").collect {
-        case Fragment.DocumentLink(id, "blog-post", _, _, _, false) => id
+      relatedPosts <- getDocuments(api, api.master, maybePost.map(_.getAll("blog-post.relatedpost").collect {
+        case Fragment.DocumentLink(id, "blog-post", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
       checkSlug(maybePost, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.blogPost(id, newSlug).url)
-        case Right(post) => Ok(views.html.postDetail(post, relatedProducts, relatedPosts))        
+        case Right(post) => Ok(views.html.postDetail(post, relatedProducts, relatedPosts)(linkResolver(api)))        
       }
     }
   }
 
   // -- Products
 
-  val productCategories = collection.immutable.ListMap(
+  val ProductCategories = collection.immutable.ListMap(
     "Macaron" -> "Macarons",
     "Cupcake" -> "Cup Cakes",
     "Pie" -> "Little Pies"
@@ -213,32 +207,32 @@ object Application extends Controller {
 
   def products = Action.async {
     for {
-      session <- SESSION
-      products <- session.forms("products").ref(session.master).submit()
+      api <- apiHome
+      products <- api.forms("products").ref(api.master).submit()
     } yield {
       Ok(views.html.products(products))
     }
   }
 
-  def productDetail(id: String, slug: String) = Action.async {
+  def productDetail(id: String, slug: String) = Action.async { implicit request =>
     for {
-      session <- SESSION
-      maybeProduct <- getDocument(session, session.master, id)
-      relatedProducts <- getDocuments(session, session.master, maybeProduct.map(_.getAll("product.related").collect {
-        case Fragment.DocumentLink(id, "product", _, _, _, false) => id
+      api <- apiHome
+      maybeProduct <- getDocument(api, api.master, id)
+      relatedProducts <- getDocuments(api, api.master, maybeProduct.map(_.getAll("product.related").collect {
+        case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
       checkSlug(maybeProduct, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.productDetail(id, newSlug).url)
-        case Right(product) => Ok(views.html.productDetail(product, relatedProducts))
+        case Right(product) => Ok(views.html.productDetail(product, relatedProducts)(linkResolver(api)))
       }
     }
   }
 
   def productsByFlavour(flavour: String) = Action.async {
     for {
-      session <- SESSION
-      products <- session.forms("everything").query(s"""[[at(my.product.flavour, "$flavour")]]""").ref(session.master).submit()
+      api <- apiHome
+      products <- api.forms("everything").query(s"""[[at(my.product.flavour, "$flavour")]]""").ref(api.master).submit()
     } yield {
       if(products.isEmpty) {
         PageNotFound
@@ -253,17 +247,17 @@ object Application extends Controller {
   def search(query: Option[String]) = Action.async { implicit request =>
     query.map(_.trim).filterNot(_.isEmpty).map { q =>
       for {
-        session <- SESSION
-        products <- session.forms("everything").query(s"""[[any(document.type, ["product", "selection"])][fulltext(document, "$q")]]""").ref(session.master).submit()
-        others <- session.forms("everything").query(s"""[[any(document.type, ["article", "blog-post", "job-offer", "store"])][fulltext(document, "$q")]]""").ref(session.master).submit()
+        api <- apiHome
+        products <- api.forms("everything").query(s"""[[any(document.type, ["product", "selection"])][fulltext(document, "$q")]]""").ref(api.master).submit()
+        others <- api.forms("everything").query(s"""[[any(document.type, ["article", "blog-post", "job-offer", "store"])][fulltext(document, "$q")]]""").ref(api.master).submit()
       } yield {
-        Ok(views.html.search(LinkToDocument(session, _), query, products, others))
+        Ok(views.html.search(query, products, others)(linkResolver(api)))
       }
     }.getOrElse {
       for {
-        session <- SESSION
+        api <- apiHome
       } yield {
-         Ok(views.html.search(LinkToDocument(session, _)))
+         Ok(views.html.search()(linkResolver(api)))
       }
     }
   }

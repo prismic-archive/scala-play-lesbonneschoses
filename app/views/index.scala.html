@@ -6,7 +6,7 @@
 
     <nav>
       <ul>
-        @Application.productCategories.values.map { category =>
+        @Application.ProductCategories.values.map { category =>
            <li><a>@category</a></li>
         }
       </ul>
@@ -14,7 +14,7 @@
 
     <div class="products">
 
-      @Application.productCategories.keys.map { category =>
+      @Application.ProductCategories.keys.map { category =>
         <ul>
           @products.filter(_.tags.contains(category)).filterNot(_.tags.contains("Featured")).take(5).map { product =>
             <li data-category="@category">
@@ -70,14 +70,14 @@
 
     <section id="blog">
 
-      <h2>Fresh news from <a href="@routes.Application.blog()" target="_self">our blog</a></h2>
+      <h2>Fresh news from <a href="@routes.Application.blog()">our blog</a></h2>
 
-      <a href="@routes.Application.blogPost(post.id, post.slug)" target="_self">
+      <a href="@routes.Application.blogPost(post.id, post.slug)">
         @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h1>@title</h1> }
         @post.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
       </a>
 
-      <a class="more" href="@routes.Application.blogPost(post.id, post.slug)" target="_self">Read more</a>
+      <a class="more" href="@routes.Application.blogPost(post.id, post.slug)">Read more</a>
 
     </section>
 

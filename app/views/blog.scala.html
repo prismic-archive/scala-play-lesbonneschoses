@@ -27,7 +27,7 @@
       <nav>
         <ul>
           <li><a href="@routes.Application.blog()">Home</a></li>
-          @Application.blogCategories.map { category =>
+          @Application.BlogCategories.map { category =>
             <li><a href="@routes.Application.blog(Some(category))">@category</a></li>
           }
         </ul>

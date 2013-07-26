@@ -1,4 +1,4 @@
-@(linker: (io.prismic.Document => io.prismic.LinkDestination), query: Option[String] = None, products: Seq[io.prismic.Document] = Nil, others: Seq[io.prismic.Document] = Nil)(implicit request: RequestHeader)
+@(query: Option[String] = None, products: Seq[io.prismic.Document] = Nil, others: Seq[io.prismic.Document] = Nil)(linkResolver: io.prismic.DocumentLinkResolver)
 
 @excerpt(text: String, words: Int = 50) = @{
   val truncated = text.take(words * 10).split("""\s""").dropRight(1).take(words).mkString(" ")
@@ -62,9 +62,9 @@
 
           case article if article.typ == "article" => {
             <article>
-              <a href="@linker(article).url">
+              <a href="@linkResolver(article)">
                 <h3>@article.getText("article.title")</h3>
-                <em>@request.host@linker(article).url</em>
+                <em>@linkResolver(article)</em>
                 <p>@excerpt(article.getText("article.content").getOrElse(""))</p>
               </a>
             </article>
@@ -72,9 +72,9 @@
 
           case store if store.typ == "store" => {
             <article>
-              <a href="@linker(store).url">
+              <a href="@linkResolver(store)">
                 <h3>Les Bonnes Choses Store – @store.getText("store.name")</h3>
-                <em>@request.host@linker(store).url</em>
+                <em>@linkResolver(store)</em>
                 <p>
                   @store.getText("store.address")
                   @store.getText("store.address2")
@@ -88,9 +88,9 @@
 
           case job if job.typ == "job-offer" => {
             <article>
-              <a href="@linker(job).url">
+              <a href="@linkResolver(job)">
                 <h3>Join us – @job.getText("job-offer.name")</h3>
-                <em>@request.host@linker(job).url</em>
+                <em>@linkResolver(job)</em>
                 <p>@excerpt(job.getText("job-offer.profile").getOrElse(""))</p>
               </a>
             </article>
@@ -98,15 +98,13 @@
 
           case blog if blog.typ == "blog-post" => {
             <article>
-              <a href="@linker(blog).url" target="_self">
+              <a href="@linkResolver(blog)">
                 <h3>In our blog – @blog.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)</h3>
-                <em>@request.host@linker(blog).url</em>
+                <em>@linkResolver(blog)</em>
                 <p>@excerpt(blog.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).getOrElse(""))</p>
               </a>
             </article>
           }
-
-          case _ => { <p>?</p> }
 
         }
 

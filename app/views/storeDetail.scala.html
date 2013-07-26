@@ -1,8 +1,8 @@
-@(store: io.prismic.Document)
+@(store: io.prismic.Document)(linkResolver: io.prismic.DocumentLinkResolver)
 
 @page(id = "store")(
   title = store.getText("store.name"), 
-  catcher = store.getHtml("store.description", Application.LINK_RESOLVER).map(Html.apply),
+  catcher = store.getHtml("store.description", linkResolver).map(Html.apply),
   image = store.getImage("store.image", "main").map(_.url)) {
 
   <div id="map-canvas" style="width:400px; height: 300px"></div>
@@ -19,35 +19,12 @@
 
     <h4>Opening times</h4>
 
-    <dl>
-      <dt>Monday</dt>
-      <dd>@store.getText("store.monday")</dd>
-    </dl>
-    <dl>
-      <dt>Tuesday</dt>
-      <dd>@store.getText("store.tuesday")</dd>
-    </dl>
-    <dl>
-      <dt>Wednesday</dt>
-      <dd>@store.getText("store.wednesday")</dd>
-    </dl>
-    <dl>
-      <dt>Thursday</dt>
-      <dd>@store.getText("store.thursday")</dd>
-    </dl>
-    <dl>
-      <dt>Friday</dt>
-      <dd>@store.getText("store.friday")</dd>
-    </dl>
-    <dl>
-      <dt>Saturday</dt>
-      <dd>@store.getText("store.saturday")</dd>
-    </dl>
-    <dl>
-      <dt>Sunday</dt>
-      <dd>@store.getText("store.sunday")</dd>
-    </dl>
-
+    @List("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday").map { day =>
+      <dl>
+        <dt>@day</dt>
+        <dd>@store.getText(s"store.$day")</dd>
+      </dl>
+    }
 
   </aside>
 

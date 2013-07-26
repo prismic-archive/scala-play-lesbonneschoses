@@ -110,16 +110,19 @@ $(function() {
     var url = document.location.toString()
 
     // Intercept clicks on links
-    $(document.body).on('click', '[href]:not([target])', function(e) {
-      e.preventDefault()
-
+    $(document.body).on('click', '[href]', function(e) {
+      
       var href = $(this).attr('href')
-      if(href[0] == '#') return $.when('DONE')
-
+      
       history.pushState(null, null, href)
       url = document.location.toString()
 
-      load(href)
+      if(document.location.pathname.indexOf('/blog') == 0) {
+        return 
+      } else {
+        e.preventDefault()
+        load(href)
+      }
     })
 
     // Intercept form submits

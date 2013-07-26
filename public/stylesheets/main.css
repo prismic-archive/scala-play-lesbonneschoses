@@ -1344,6 +1344,30 @@ html.no-js #home #caroussel .products ul li {
 }
 
 /* ==========================================================================
+   Not found
+   ========================================================================== */
+
+#not-found > section:first-child {
+  height: 200px;
+  background: #f8f8f8;
+  padding-top: 100px;
+}
+
+#not-found > section:first-child h1 {
+  text-align: center;
+}
+
+#not-found > section {
+  padding: 50px;
+  text-align: center;
+}
+
+#not-found > section p a {
+  color: inherit;
+}
+
+
+/* ==========================================================================
    Search
    ========================================================================== */
 
