@@ -1,4 +1,4 @@
-@(id: String)(title: Option[String], image: Option[String] = None, catcher: Option[Html] = None)(body: Html)
+@(id: String)(title: Option[String], image: Option[String] = None, catcher: Option[Html] = None)(body: Html)(implicit ctx: Prismic.Context)
 
 @main(id = id, title = title) {
 

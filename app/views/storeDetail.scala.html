@@ -1,8 +1,8 @@
-@(store: io.prismic.Document)(linkResolver: io.prismic.DocumentLinkResolver)
+@(store: io.prismic.Document)(implicit ctx: Prismic.Context)
 
 @page(id = "store")(
   title = store.getText("store.name"), 
-  catcher = store.getHtml("store.description", linkResolver).map(Html.apply),
+  catcher = store.getHtml("store.description", ctx.linkResolver).map(Html.apply),
   image = store.getImage("store.image", "main").map(_.url)) {
 
   <div id="map-canvas" style="width:400px; height: 300px"></div>
@@ -22,7 +22,7 @@
     @List("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday").map { day =>
       <dl>
         <dt>@day</dt>
-        <dd>@store.getText(s"store.$day")</dd>
+        <dd>@store.getText(s"store.${day.toLowerCase}[0]")</dd>
       </dl>
     }
 

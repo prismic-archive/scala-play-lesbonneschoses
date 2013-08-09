@@ -1,4 +1,4 @@
-@(selection: io.prismic.Document, products: Seq[io.prismic.Document])(linkResolver: io.prismic.DocumentLinkResolver)
+@(selection: io.prismic.Document, products: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @main(title = selection.getText("selection.name"), id = "selection") {
 
@@ -21,7 +21,7 @@
     <img src="@(selection.getImage("selection.image", "main").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
 
     <div>
-      @selection.getHtml("selection.description", linkResolver).map(Html.apply)
+      @selection.getHtml("selection.description", ctx.linkResolver).map(Html.apply)
 
       <h4>
         @selection.getNumber("selection.price", "$0.00").map { price =><em>@price</em>}
@@ -40,7 +40,7 @@
         <ul>
           @products.map { product =>
             <li data-category="@product.tags.filter(Application.ProductCategories.contains).headOption">
-              <a href="@routes.Application.productDetail(product.id, product.slug)">
+              <a href="@routes.Application.productDetail(product.id, product.slug, ref = ctx.maybeRef)">
                 <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
                 <span>@product.getText("product.name").getOrElse("Product")</span>
               </a>

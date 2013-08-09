@@ -2,28 +2,33 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                                                   controllers.Application.index
+GET     /                                                   controllers.Application.index(ref: Option[String] ?= None)
 
-GET     /about                                              controllers.Application.about()
+GET     /about                                              controllers.Application.about(ref: Option[String] ?= None)
 
-GET     /jobs                                               controllers.Application.jobs()
-GET     /jobs/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.jobDetail(id, slug)
+GET     /jobs                                               controllers.Application.jobs(ref: Option[String] ?= None)
+GET     /jobs/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.jobDetail(id, slug, ref: Option[String] ?= None)
 
-GET     /stores                                             controllers.Application.stores()
-GET     /stores/$id<[-_a-zA-Z0-9]{16}>/:slug                controllers.Application.storeDetail(id, slug)
+GET     /stores                                             controllers.Application.stores(ref: Option[String] ?= None)
+GET     /stores/$id<[-_a-zA-Z0-9]{16}>/:slug                controllers.Application.storeDetail(id, slug, ref: Option[String] ?= None)
 
-GET     /blog                                               controllers.Application.blog(category: Option[String] ?= None)
-GET     /blog/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.blogPost(id, slug)
+GET     /blog                                               controllers.Application.blog(category: Option[String] ?= None, ref: Option[String] ?= None)
+GET     /blog/$id<[-_a-zA-Z0-9]{16}>/:slug                  controllers.Application.blogPost(id, slug, ref: Option[String] ?= None)
 
-GET     /products                                           controllers.Application.products
-GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.productDetail(id, slug)
-GET     /products/by-flavour                                controllers.Application.productsByFlavour(flavour)
+GET     /products                                           controllers.Application.products(ref: Option[String] ?= None)
+GET     /products/$id<[-_a-zA-Z0-9]{16}>/:slug              controllers.Application.productDetail(id, slug, ref: Option[String] ?= None)
+GET     /products/by-flavour                                controllers.Application.productsByFlavour(flavour, ref: Option[String] ?= None)
 
-GET     /selections/$id<[-_a-zA-Z0-9]{16}>/:slug            controllers.Application.selectionDetail(id, slug)
+GET     /selections/$id<[-_a-zA-Z0-9]{16}>/:slug            controllers.Application.selectionDetail(id, slug, ref: Option[String] ?= None)
 
-GET     /search                                             controllers.Application.search(query: Option[String] ?= None)
+GET     /search                                             controllers.Application.search(query: Option[String] ?= None, ref: Option[String] ?= None)
 
-GET     /not-found                                          controllers.Application.brokenLink()
+GET     /not-found                                          controllers.Application.brokenLink(ref: Option[String] ?= None)
+
+# PrismicIO OAuth
+GET     /signin                                             controllers.Prismic.signin()
+GET     /auth_callback                                      controllers.Prismic.callback(code: Option[String])
+POST    /signout                                            controllers.Prismic.signout()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)

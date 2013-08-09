@@ -1,4 +1,4 @@
-@(products: Seq[io.prismic.Document], featured: Seq[io.prismic.Document])
+@(products: Seq[io.prismic.Document], featured: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @main(id = "home") {
 
@@ -18,7 +18,7 @@
         <ul>
           @products.filter(_.tags.contains(category)).filterNot(_.tags.contains("Featured")).take(5).map { product =>
             <li data-category="@category">
-              <a href="@routes.Application.productDetail(product.id, product.slug)">
+              <a href="@routes.Application.productDetail(product.id, product.slug, ref = ctx.maybeRef)">
                 <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
                 <span>@product.getText("product.name").getOrElse("Product")</span>
                 <em>@product.getNumber("product.price", "$0.00").getOrElse("–")</em>
@@ -31,7 +31,7 @@
     </div>
 
     <p>
-      <a href="@routes.Application.products()">Browse all our products</a>
+      <a href="@routes.Application.products(ref = ctx.maybeRef)">Browse all our products</a>
     </p>
 
   </section>
@@ -42,7 +42,7 @@
 
       case product if product.typ == "product" => {
         <div style="@product.getImage("product.gallery[0]", "squared").map { img => background-image: url(@img.url); }">
-          <a href="@routes.Application.productDetail(product.id, product.slug)">
+          <a href="@routes.Application.productDetail(product.id, product.slug, ref = ctx.maybeRef)">
             <h3><span>@product.getText("product.name").getOrElse("Product")</span></h3>
             <p>
               <span>@product.getText("product.short_lede")</span>
@@ -53,7 +53,7 @@
 
       case selection if selection.typ == "selection" => {
         <div style="@selection.getImage("selection.catcher_image", "squarred").map { img => background-image: url(@img.url); }">
-          <a href="@routes.Application.selectionDetail(selection.id, selection.slug)">
+          <a href="@routes.Application.selectionDetail(selection.id, selection.slug, ref = ctx.maybeRef)">
             <h3><span>@selection.getText("selection.name").getOrElse("Selection")</span></h3>
             <p>
               <span>@selection.getText("selection.short_lede")</span>
@@ -72,12 +72,12 @@
 
       <h2>Fresh news from <a href="@routes.Application.blog()">our blog</a></h2>
 
-      <a href="@routes.Application.blogPost(post.id, post.slug)">
+      <a href="@routes.Application.blogPost(post.id, post.slug, ref = ctx.maybeRef)">
         @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h1>@title</h1> }
         @post.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).map { text => <p>@text</p> }
       </a>
 
-      <a class="more" href="@routes.Application.blogPost(post.id, post.slug)">Read more</a>
+      <a class="more" href="@routes.Application.blogPost(post.id, post.slug, ref = ctx.maybeRef)">Read more</a>
 
     </section>
 

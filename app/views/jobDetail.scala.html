@@ -1,4 +1,4 @@
-@(main: io.prismic.Document, job: io.prismic.Document)(linkResolver: io.prismic.DocumentLinkResolver)
+@(main: io.prismic.Document, job: io.prismic.Document)(implicit ctx: Prismic.Context)
 
 @page(id = "job")(
   title = job.getText("job-offer.name"), 
@@ -6,10 +6,10 @@
 
   <h2>About you</h2>
 
-  @job.getHtml("job-offer.profile", linkResolver).map(Html.apply)
+  @job.getHtml("job-offer.profile", ctx.linkResolver).map(Html.apply)
 
   <h2>Your responsibilities</h2>
 
-  @job.getHtml("job-offer.job_description", linkResolver).map(Html.apply)
+  @job.getHtml("job-offer.job_description", ctx.linkResolver).map(Html.apply)
 
 }

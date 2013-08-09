@@ -1,4 +1,4 @@
-@(query: Option[String] = None, products: Seq[io.prismic.Document] = Nil, others: Seq[io.prismic.Document] = Nil)(linkResolver: io.prismic.DocumentLinkResolver)
+@(query: Option[String] = None, products: Seq[io.prismic.Document] = Nil, others: Seq[io.prismic.Document] = Nil)(implicit ctx: Prismic.Context)
 
 @excerpt(text: String, words: Int = 50) = @{
   val truncated = text.take(words * 10).split("""\s""").dropRight(1).take(words).mkString(" ")
@@ -9,7 +9,7 @@
 
   <section>
 
-    <form action="@routes.Application.search()" method="GET">
+    <form action="@routes.Application.search(ref = ctx.maybeRef)" method="GET">
       <input type="text" name="query" placeholder="Search anything" value="@query" autocomplete="off">
       <input type="submit" value="Submit">
     </form>
@@ -29,7 +29,7 @@
 
             case product if product.typ == "product" => {
               <li>
-                <a href="@routes.Application.productDetail(product.id, product.slug)">
+                <a href="@routes.Application.productDetail(product.id, product.slug, ref = ctx.maybeRef)">
                   <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
                   <span>@product.getText("product.name").getOrElse("Product")</span>
                 </a>
@@ -38,7 +38,7 @@
 
             case selection if selection.typ == "selection" => {
               <li>
-                <a href="@routes.Application.selectionDetail(selection.id, selection.slug)">
+                <a href="@routes.Application.selectionDetail(selection.id, selection.slug, ref = ctx.maybeRef)">
                   <img src="@(selection.getImage("selection.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
                   <span>@selection.getText("selection.name").getOrElse("Product selection")</span>
                 </a>
@@ -62,9 +62,9 @@
 
           case article if article.typ == "article" => {
             <article>
-              <a href="@linkResolver(article)">
+              <a href="@ctx.linkResolver(article)">
                 <h3>@article.getText("article.title")</h3>
-                <em>@linkResolver(article)</em>
+                <em>@ctx.linkResolver(article)</em>
                 <p>@excerpt(article.getText("article.content").getOrElse(""))</p>
               </a>
             </article>
@@ -72,9 +72,9 @@
 
           case store if store.typ == "store" => {
             <article>
-              <a href="@linkResolver(store)">
+              <a href="@ctx.linkResolver(store)">
                 <h3>Les Bonnes Choses Store – @store.getText("store.name")</h3>
-                <em>@linkResolver(store)</em>
+                <em>@ctx.linkResolver(store)</em>
                 <p>
                   @store.getText("store.address")
                   @store.getText("store.address2")
@@ -88,9 +88,9 @@
 
           case job if job.typ == "job-offer" => {
             <article>
-              <a href="@linkResolver(job)">
+              <a href="@ctx.linkResolver(job)">
                 <h3>Join us – @job.getText("job-offer.name")</h3>
-                <em>@linkResolver(job)</em>
+                <em>@ctx.linkResolver(job)</em>
                 <p>@excerpt(job.getText("job-offer.profile").getOrElse(""))</p>
               </a>
             </article>
@@ -98,9 +98,9 @@
 
           case blog if blog.typ == "blog-post" => {
             <article>
-              <a href="@linkResolver(blog)">
+              <a href="@ctx.linkResolver(blog)">
                 <h3>In our blog – @blog.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)</h3>
-                <em>@linkResolver(blog)</em>
+                <em>@ctx.linkResolver(blog)</em>
                 <p>@excerpt(blog.getStructuredText("blog-post.body").flatMap(_.getFirstParagraph).map(_.text).getOrElse(""))</p>
               </a>
             </article>
@@ -120,7 +120,7 @@
           <h2>No results found</h2>
 
           <p>
-            Do you want to browse our <a href="@routes.Application.products()">products catalog</a>?
+            Do you want to browse our <a href="@routes.Application.products(ref = ctx.maybeRef)">products catalog</a>?
           </p>
 
         </div>

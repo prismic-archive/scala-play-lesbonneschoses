@@ -1,4 +1,4 @@
-@(post: io.prismic.Document, relatedProducts: Seq[io.prismic.Document], relatedPosts: Seq[io.prismic.Document])(linkResolver: io.prismic.DocumentLinkResolver)
+@(post: io.prismic.Document, relatedProducts: Seq[io.prismic.Document], relatedPosts: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @blog(title = post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text)) {
   
@@ -7,7 +7,7 @@
       <em class="infos">@post.getDate("blog-post.date", "MMMM dd, yyyy") @post.getText("blog-post.author").map { author => by @author }</em>
       
       <article>
-        @post.getHtml("blog-post.body", linkResolver).map(Html.apply)
+        @post.getHtml("blog-post.body", ctx.linkResolver).map(Html.apply)
       </article>
 
       @Option(relatedPosts).filterNot(_.isEmpty).map { posts =>
@@ -18,7 +18,7 @@
           @posts.map { post =>
             @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title =>
               <li>
-                <a href="@routes.Application.blogPost(post.id, post.slug)">@title</a>
+                <a href="@routes.Application.blogPost(post.id, post.slug, ref = ctx.maybeRef)">@title</a>
               </li>
             }
           }
@@ -39,7 +39,7 @@
           fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
-        <div class="fb-comments" data-href="@linkResolver(post)" data-width="640" data-num-posts="10"></div>
+        <div class="fb-comments" data-href="@ctx.linkResolver(post)" data-width="640" data-num-posts="10"></div>
 
       }
 
@@ -54,7 +54,7 @@
       <ul>
         @products.map { product =>
           <li>
-            <a href="@routes.Application.productDetail(product.id, product.slug)">
+            <a href="@routes.Application.productDetail(product.id, product.slug, ref = ctx.maybeRef)">
               <img src="@(product.getImage("product.image", "icon").map(_.url).getOrElse(routes.Assets.at("images/missing-image.png")))">
               <span>@product.getText("product.name").getOrElse("Product")</span>
             </a>

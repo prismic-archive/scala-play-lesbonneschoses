@@ -1,12 +1,12 @@
-@(main: io.prismic.Document, jobs: Seq[io.prismic.Document])(linkResolver: io.prismic.DocumentLinkResolver)
+@(main: io.prismic.Document, jobs: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @page(id = "jobs")(
   title = main.getText("article.title"), 
   image = main.getImage("article.image", "main").map(_.url), 
-  catcher = main.getHtml("article.short_lede", linkResolver).map(Html.apply)) {
+  catcher = main.getHtml("article.short_lede", ctx.linkResolver).map(Html.apply)) {
 
   <div class="presentation">
-    @main.getHtml("article.content", linkResolver).map(Html.apply)
+    @main.getHtml("article.content", ctx.linkResolver).map(Html.apply)
   </div>
 
 
@@ -26,7 +26,7 @@
       <div class="listing">
       @jobs.map { job =>
         <div class="job">
-          <a href="@routes.Application.jobDetail(job.id, job.slug)">
+          <a href="@routes.Application.jobDetail(job.id, job.slug, ref = ctx.maybeRef)">
             <h3>@job.getText("job-offer.name")</h3>
             <p>
               @job.getStructuredText("job-offer.profile").flatMap(_.getFirstParagraph).map(_.text)

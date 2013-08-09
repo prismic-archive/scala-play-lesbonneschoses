@@ -67,6 +67,11 @@ $(function() {
 
   }
 
+  /**
+   * External pages (don't used HTML5 pushState for theses ones)
+   */
+  var external = ['/blog', '/signin']
+
   // Initial setup
   setup.init()
 
@@ -113,16 +118,22 @@ $(function() {
     $(document.body).on('click', '[href]', function(e) {
       
       var href = $(this).attr('href')
-      
-      history.pushState(null, null, href)
-      url = document.location.toString()
 
-      if(document.location.pathname.indexOf('/blog') == 0) {
-        return 
-      } else {
+      console.log(href)
+
+      if(!/https?:\/\//.test(href) || href.replace(/https?:\/\//, '').indexOf(document.location.host) != 0) {
+
+        history.pushState(null, null, href)
+        url = document.location.toString()
+
+        for(var i=0; i<external.length; i++) {
+          if(document.location.pathname.indexOf(external[i]) == 0) return
+        }
+
         e.preventDefault()
         load(href)
       }
+      
     })
 
     // Intercept form submits
@@ -131,7 +142,7 @@ $(function() {
 
       var action = $(this).attr('action'),
           data = $(this).serialize()
-          href = action + '?' + data
+          href = action + (action.indexOf('?') > -1 ? '&' : '?') + data
 
       history.pushState(null, null, href)
       url = document.location.toString()

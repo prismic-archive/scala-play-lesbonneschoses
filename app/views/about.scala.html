@@ -1,10 +1,10 @@
-@(about: io.prismic.Document)(linkResolver: io.prismic.DocumentLinkResolver)
+@(about: io.prismic.Document)(implicit ctx: Prismic.Context)
 
 @page(id = "about")(
   title = about.getText("article.title"), 
   image = about.getImage("article.image", "main").map(_.url), 
-  catcher = about.getHtml("article.short_lede", linkResolver).map(Html.apply)) {
+  catcher = about.getHtml("article.short_lede", ctx.linkResolver).map(Html.apply)) {
 
-  @about.getHtml("article.content", linkResolver).map(Html.apply)
+  @about.getHtml("article.content", ctx.linkResolver).map(Html.apply)
 
 }

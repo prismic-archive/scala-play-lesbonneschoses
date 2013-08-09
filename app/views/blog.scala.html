@@ -1,4 +1,4 @@
-@(title: Option[String] = None)(content: Html)
+@(title: Option[String] = None)(content: Html)(implicit ctx: Prismic.Context)
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -20,15 +20,15 @@
 
     <header>
 
-      <a href="@routes.Application.index()">
+      <a href="@routes.Application.index(ref = ctx.maybeRef)">
         <h1>Les Bonnes Choses</h1>
       </a>
 
       <nav>
         <ul>
-          <li><a href="@routes.Application.blog()">Home</a></li>
+          <li><a href="@routes.Application.blog(ref = ctx.maybeRef)">Home</a></li>
           @Application.BlogCategories.map { category =>
-            <li><a href="@routes.Application.blog(Some(category))">@category</a></li>
+            <li><a href="@routes.Application.blog(Some(category), ref = ctx.maybeRef)">@category</a></li>
           }
         </ul>
       </nav>
@@ -38,6 +38,8 @@
     <div class="main">
       @content
     </div>
+
+    @footer()
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/jquery-1.10.1.min.js")"><\/script>')</script>

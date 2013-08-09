@@ -1,0 +1,9 @@
+@()(implicit ctx: Prismic.Context)
+
+<footer>
+  This is a demonstration website for <a href="http://prismic.io">prismic.io</a> 
+
+  @if(!ctx.hasPrivilegedAccess) {
+    – Please <a href="@routes.Prismic.signin">sign in</a> to preview your changes.
+  }
+</footer>

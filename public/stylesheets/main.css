@@ -62,6 +62,10 @@ body {
   text-shadow: none;
 }
 
+a {
+  color: inherit;
+}
+
 hr {
   display: block;
   height: 1px;
@@ -107,6 +111,11 @@ body {
   overflow-x: hidden; 
 }
 
+body.toolbar {
+  position: relative;
+  padding-top: 40px;
+}
+
 header {
   background: none;
   z-index: 1000;
@@ -114,6 +123,10 @@ header {
   top: 0;
   max-width: 1440px;
   width: 100%;
+}
+
+.toolbar header {
+  top: 40px;
 }
 
 header nav {

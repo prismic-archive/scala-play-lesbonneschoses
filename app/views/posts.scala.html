@@ -1,4 +1,4 @@
-@(posts: Seq[io.prismic.Document])
+@(posts: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @blog(title = Some("Our blog")) {
   
@@ -6,7 +6,7 @@
     @posts.take(10).map { post =>
 
       <article>
-        <a href="@routes.Application.blogPost(post.id, post.slug)">
+        <a href="@routes.Application.blogPost(post.id, post.slug, ref = ctx.maybeRef)">
           <em class="infos">@post.getDate("blog-post.date", "MMMM dd, yyyy") @post.getText("blog-post.author").map { author => by @author }</em>
           @post.getStructuredText("blog-post.body").flatMap(_.getTitle).map(_.text).map { title => <h2>@title</h2> }
           

@@ -1,4 +1,4 @@
-@(flavour: String, products: Seq[io.prismic.Document])
+@(flavour: String, products: Seq[io.prismic.Document])(implicit ctx: Prismic.Context)
 
 @views.html.products(products, title = Some(flavour match {
   case "Chocolate"    => "All our pastries for the chocolate lovers"
