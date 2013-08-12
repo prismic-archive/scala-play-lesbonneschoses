@@ -55,7 +55,7 @@ object Prismic extends Controller {
   def action[A](bodyParser: BodyParser[A])(ref: Option[String] = None)(block: Prismic.Request[A] => Future[SimpleResult]) = Action.async(bodyParser) { request =>
     (
       for {
-        api <- apiHome(request.session.get(ACCESS_TOKEN))
+        api <- apiHome(request.session.get(ACCESS_TOKEN).orElse(Play.configuration.getString("prismic.token")))
         ctx = Context(api, ref.map(_.trim).filterNot(_.isEmpty).getOrElse(api.master.ref), request.session.get(ACCESS_TOKEN), Application.linkResolver(api, ref.filterNot(_ == api.master.ref))(request))
         result <- block(Request(request, ctx))
       } yield result
