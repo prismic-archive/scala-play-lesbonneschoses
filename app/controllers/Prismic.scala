@@ -36,9 +36,9 @@ object Prismic extends Controller {
   private val Cache = BuiltInCache(200)
 
   // -- Write debug and error messages to the Play `prismic` logger (check the configuration in application.conf)
-  private val Logger = (level: String, message: String) => level match { 
-    case "DEBUG" => play.api.Logger("prismic").debug(message)
-    case "ERROR" => play.api.Logger("prismic").error(message)
+  private val Logger = (level: Symbol, message: String) => level match { 
+    case 'DEBUG => play.api.Logger("prismic").debug(message)
+    case 'ERROR => play.api.Logger("prismic").error(message)
     case _ => play.api.Logger("prismic").info(message)
   }
   
@@ -120,7 +120,7 @@ object Prismic extends Controller {
       }
     ).recover {
       case x: Throwable => 
-        Logger("ERROR", s"""Can't retrieve the OAuth token for code $code: ${x.getMessage}""".stripMargin)
+        Logger('ERROR, s"""Can't retrieve the OAuth token for code $code: ${x.getMessage}""".stripMargin)
         Unauthorized("Can't sign you in")
     }
   }

@@ -61,7 +61,6 @@ object Application extends Controller {
     }
   }
 
-
   // -- Helper: Retrieve a single document from its bookmark
   def getBookmark(bookmark: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
     ctx.api.bookmarks.get(bookmark).map(id => getDocument(id)).getOrElse(Future.successful(None))
