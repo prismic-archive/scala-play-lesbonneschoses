@@ -13,10 +13,13 @@
 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/normalize.min.css")">
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/blog.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/toolbar.css")">
 
     <script src="@routes.Assets.at("javascripts/modernizr-2.6.2.min.js")"></script>
   </head>
-  <body>
+  <body @if(ctx.hasPrivilegedAccess) { class="toolbar" }>
+
+    @toolbar()
 
     <header>
 

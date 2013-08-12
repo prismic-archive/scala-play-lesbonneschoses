@@ -25,9 +25,9 @@ GET     /search                                             controllers.Applicat
 
 GET     /not-found                                          controllers.Application.brokenLink(ref: Option[String] ?= None)
 
-# PrismicIO OAuth
-GET     /signin                                             controllers.Prismic.signin()
-GET     /auth_callback                                      controllers.Prismic.callback(code: Option[String])
+# Prismic.io OAuth
+GET     /signin                                             controllers.Prismic.signin
+GET     /auth_callback                                      controllers.Prismic.callback(code: Option[String], redirect_uri: Option[String])
 POST    /signout                                            controllers.Prismic.signout()
 
 # Map static resources from the /public folder to the /assets URL path

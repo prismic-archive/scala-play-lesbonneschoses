@@ -7,7 +7,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 object Global extends GlobalSettings {
 
   override def onHandlerNotFound(request: RequestHeader) = {
-    Results.NotFound("BOUH")
+    Results.NotImplemented("Need async result in Global.onHandlerNotFound") // FIX ME
   }
 
 }

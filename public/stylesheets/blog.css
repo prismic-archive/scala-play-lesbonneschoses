@@ -111,6 +111,23 @@ body {
   overflow-x: hidden; 
 }
 
+body.toolbar {
+  position: relative;
+  padding-top: 40px;
+}
+
+#toolbar form {
+  width: 100% !important;
+}
+
+#toolbar form:first-child {
+  margin-left: 20px;
+}
+
+#toolbar form:last-child {
+  right: 20px;
+}
+
 header {
   position: fixed;
   left: 0;
@@ -120,6 +137,10 @@ header {
   border-right: 1px solid #ddd;
   text-align: center;
   padding: 30px 0;
+}
+
+body.toolbar header {
+  top: 40px;
 }
 
 header > a {

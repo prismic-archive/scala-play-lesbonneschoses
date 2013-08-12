@@ -3,7 +3,7 @@
 @if(ctx.hasPrivilegedAccess) {
   <div id="toolbar">
 
-    <form action="" method="GET">
+    <form method="GET">
       <label for="releaseSelector">See this website: </label>
       <select id="releaseSelector" name="ref" onchange="this.form.submit()">
         <option value="@ctx.api.master.ref">As currently seen by guest visitors</option>

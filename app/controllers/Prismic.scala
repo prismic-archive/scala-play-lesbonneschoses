@@ -14,10 +14,18 @@ import Play.current
 import io.prismic._
 
 /**
- * This Prismic object contains several helper to make it easier
+ * This Prismic object contains several helpers that make it easier
  * to build your application using both Prismic.io and Play:
  *
- * - 
+ * It reads some configuration from the application.conf file.
+ *
+ * The debug and error messages emitted by the Scala Kit are redirected
+ * to the Play application Logger.
+ *
+ * It provides an "Action builder" that help to create actions that will query
+ * a prismic.io repository.
+ *
+ * It provides some ready-to-use actions for the OAuth2 workflow.
  */
 object Prismic extends Controller {
 
@@ -31,13 +39,14 @@ object Prismic extends Controller {
   private val Logger = (level: String, message: String) => level match { 
     case "DEBUG" => play.api.Logger("prismic").debug(message)
     case "ERROR" => play.api.Logger("prismic").error(message)
-    case _ =>
+    case _ => play.api.Logger("prismic").info(message)
   }
   
   // Helper method to read the Play application configuration
   private def config(key: String) = Play.configuration.getString(key).getOrElse(sys.error(s"Missing configuration [$key]"))
 
-  private def callbackUrl(implicit rh: RequestHeader) = routes.Prismic.callback(code = None).absoluteURL()
+  // Compute the callback URL to use for the OAuth worklow
+  private def callbackUrl(implicit rh: RequestHeader) = routes.Prismic.callback(code = None, redirect_uri = rh.headers.get("referer")).absoluteURL()
 
   // -- Define a `Prismic request` that contain both the original request and the Prismic call context
   case class Request[A](request: play.api.mvc.Request[A], ctx: Context) extends WrappedRequest(request)
@@ -59,10 +68,10 @@ object Prismic extends Controller {
   // -- Alternative action builder for the default body parser
   def action(ref: Option[String] = None)(block: Prismic.Request[AnyContent] => Future[SimpleResult]): Action[AnyContent] = action(parse.anyContent)(ref)(block)
 
+  // -- Retrieve the Prismic Context from a request handled by an built using Prismic.action
   def ctx(implicit req: Request[_]) = req.ctx
 
-  // -- Contexts
-
+  // -- A Prismic context that help to keep the reference to useful primisc.io contextual data
   case class Context(api: Api, ref: String, accessToken: Option[String], linkResolver: DocumentLinkResolver) {
     def maybeRef = Option(ref).filterNot(_ == api.master.ref)
     def hasPrivilegedAccess = accessToken.isDefined
@@ -72,11 +81,12 @@ object Prismic extends Controller {
     implicit def fromRequest(implicit req: Request[_]): Context = req.ctx
   }
   
-  // -- API
-
+  // -- Fetch the API entry document
   def apiHome(accessToken: Option[String] = None) = Api.get(config("prismic.api"), accessToken = accessToken, cache = Cache, logger = Logger)
 
+  // --
   // -- OAuth actions
+  // --
   
   def signin = Action.async { implicit req =>
     for(api <- apiHome()) yield {
@@ -92,7 +102,7 @@ object Prismic extends Controller {
     Redirect(routes.Application.index(ref = None)).withNewSession
   }
 
-  def callback(code: Option[String]) = Action.async { implicit req =>
+  def callback(code: Option[String], redirect_uri: Option[String]) = Action.async { implicit req =>
     (
       for {
         api <- apiHome()
@@ -104,7 +114,7 @@ object Prismic extends Controller {
           "client_secret" -> Seq(config("prismic.clientSecret"))
         )).filter(_.status == 200).map(_.json)
       } yield { 
-        Redirect(routes.Application.index(ref = None)).withSession(
+        Redirect(redirect_uri.getOrElse(routes.Application.index(ref = None).url)).withSession(
           ACCESS_TOKEN -> (tokenResponse \ "access_token").as[String]
         )
       }

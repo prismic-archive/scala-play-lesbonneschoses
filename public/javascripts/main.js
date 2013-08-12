@@ -119,16 +119,18 @@ $(function() {
       
       var href = $(this).attr('href')
 
-      console.log(href)
-
       if(!/https?:\/\//.test(href) || href.replace(/https?:\/\//, '').indexOf(document.location.host) != 0) {
 
         history.pushState(null, null, href)
-        url = document.location.toString()
-
+        
         for(var i=0; i<external.length; i++) {
-          if(document.location.pathname.indexOf(external[i]) == 0) return
+          if(document.location.pathname.indexOf(external[i]) == 0) {
+            history.pushState(null, null, url)
+            return
+          }
         }
+
+        url = document.location.toString()
 
         e.preventDefault()
         load(href)

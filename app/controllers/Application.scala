@@ -12,50 +12,62 @@ import Play.current
 
 import io.prismic._
 
+/**
+ * Main controller for the Website.
+ *
+ * It uses some helpers provided by `controllers.Prismic`
+ */
 object Application extends Controller {
 
   import Prismic.ctx
 
-  // -- Links resolver
-
+  // -- Resolve links to documents
   def linkResolver(api: Api, ref: Option[String])(implicit request: RequestHeader) = DocumentLinkResolver(api) { 
+
+    // For "Bookmarked" documents that use a special page
     case (Fragment.DocumentLink(_, _, _, _, _), Some("about"))          => routes.Application.about(ref).absoluteURL()
     case (Fragment.DocumentLink(_, _, _, _, _), Some("jobs"))           => routes.Application.jobs(ref).absoluteURL()
     case (Fragment.DocumentLink(_, _, _, _, _), Some("stores"))         => routes.Application.stores(ref).absoluteURL()
+    
+    // Store documents
     case (Fragment.DocumentLink(id, "store", _, slug, false), _)        => routes.Application.storeDetail(id, slug, ref).absoluteURL()
+    
+    // Any product
     case (Fragment.DocumentLink(id, "product", _, slug, false), _)      => routes.Application.productDetail(id, slug, ref).absoluteURL()
+    
+    // Job offers
     case (Fragment.DocumentLink(id, "job-offer", _, slug, false), _)    => routes.Application.jobDetail(id, slug, ref).absoluteURL()
+    
+    // Blog
     case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _)    => routes.Application.blogPost(id, slug, ref).absoluteURL()
+    
     case anyOtherLink                                                   => routes.Application.brokenLink(ref).absoluteURL()
   }
   
-  // -- Helpers
-
-  def PageNotFound(implicit ctx: Prismic.Context) = NotFound(views.html.pageNotFound())
-
-  def getBookmark(api: Api, ref: String, bookmark: String): Future[Option[Document]] = {
-    api.bookmarks.get(bookmark).map { id =>
-      getDocument(api, ref, id)
-    }.getOrElse {
-      Future.successful(None)
-    }
-  }
-
-  def getDocument(api: Api, ref: String, id: String): Future[Option[Document]] = {
+  // -- Helper: Retrieve a single document by Id
+  def getDocument(id: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
     for {
-      documents <- api.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ref).submit()
+      documents <- ctx.api.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ctx.ref).submit()
     } yield {
       documents.headOption
     }
   }
 
-  def getDocuments(api: Api, ref: String, ids: String*): Future[Seq[Document]] = {
+  // -- Helper: Retrieve several documents by Id
+  def getDocuments(ids: String*)(implicit ctx: Prismic.Context): Future[Seq[Document]] = {
     ids match {
       case Nil => Future.successful(Nil)
-      case ids => api.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ref).submit()
+      case ids => ctx.api.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ctx.ref).submit()
     }
   }
 
+
+  // -- Helper: Retrieve a single document from its bookmark
+  def getBookmark(bookmark: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
+    ctx.api.bookmarks.get(bookmark).map(id => getDocument(id)).getOrElse(Future.successful(None))
+  }
+
+  // -- Helper: Check if the slug is valid and redirect to the most recent version id needed
   def checkSlug(document: Option[Document], slug: String)(callback: Either[String,Document] => SimpleResult)(implicit r: Prismic.Request[_]) = {
     document.collect {
       case document if document.slug == slug => callback(Right(document))
@@ -66,6 +78,8 @@ object Application extends Controller {
   }
 
   // -- Page not found
+
+  def PageNotFound(implicit ctx: Prismic.Context) = NotFound(views.html.pageNotFound())
 
   def brokenLink(ref: Option[String]) = Prismic.action(ref) { implicit request =>
     Future.successful(PageNotFound)
@@ -86,7 +100,7 @@ object Application extends Controller {
 
   def about(ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybePage <- getBookmark(ctx.api, ctx.ref, "about")
+      maybePage <- getBookmark("about")
     } yield {
       maybePage.map(page => Ok(views.html.about(page))).getOrElse(PageNotFound)
     }
@@ -96,7 +110,7 @@ object Application extends Controller {
 
   def jobs(ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybePage <- getBookmark(ctx.api, ctx.ref, "jobs")
+      maybePage <- getBookmark("jobs")
       jobs <- ctx.api.forms("jobs").ref(ctx.ref).submit()
     } yield {
       maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
@@ -105,8 +119,8 @@ object Application extends Controller {
 
   def jobDetail(id: String, slug: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybePage <- getBookmark(ctx.api, ctx.ref, "jobs")
-      maybeJob <- getDocument(ctx.api, ctx.ref, id)
+      maybePage <- getBookmark("jobs")
+      maybeJob <- getDocument(id)
     } yield {
       checkSlug(maybeJob, slug) { 
         case Left(newSlug) => MovedPermanently(routes.Application.jobDetail(id, newSlug).url)
@@ -121,7 +135,7 @@ object Application extends Controller {
 
   def stores(ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybePage <- getBookmark(ctx.api, ctx.ref, "stores")
+      maybePage <- getBookmark("stores")
       stores <- ctx.api.forms("stores").ref(ctx.ref).submit()
     } yield {
       maybePage.map(page => Ok(views.html.stores(page, stores))).getOrElse(PageNotFound)
@@ -130,7 +144,7 @@ object Application extends Controller {
 
   def storeDetail(id: String, slug: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybeStore <- getDocument(ctx.api, ctx.ref, id)
+      maybeStore <- getDocument(id)
     } yield {
       checkSlug(maybeStore, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.storeDetail(id, newSlug).url)
@@ -139,12 +153,12 @@ object Application extends Controller {
     }
   }
 
-  // -- Selections
+  // -- Products Selections
 
   def selectionDetail(id: String, slug: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybeSelection <- getDocument(ctx.api, ctx.ref, id)
-      products <- getDocuments(ctx.api, ctx.ref, maybeSelection.map(_.getAll("selection.product").collect {
+      maybeSelection <- getDocument(id)
+      products <- getDocuments(maybeSelection.map(_.getAll("selection.product").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
@@ -175,11 +189,11 @@ object Application extends Controller {
 
   def blogPost(id: String, slug: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybePost <- getDocument(ctx.api, ctx.ref, id)
-      relatedProducts <- getDocuments(ctx.api, ctx.ref, maybePost.map(_.getAll("blog-post.relatedproduct").collect {
+      maybePost <- getDocument(id)
+      relatedProducts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedproduct").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
-      relatedPosts <- getDocuments(ctx.api, ctx.ref, maybePost.map(_.getAll("blog-post.relatedpost").collect {
+      relatedPosts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedpost").collect {
         case Fragment.DocumentLink(id, "blog-post", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
@@ -208,8 +222,8 @@ object Application extends Controller {
 
   def productDetail(id: String, slug: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      maybeProduct <- getDocument(ctx.api, ctx.ref, id)
-      relatedProducts <- getDocuments(ctx.api, ctx.ref, maybeProduct.map(_.getAll("product.related").collect {
+      maybeProduct <- getDocument(id)
+      relatedProducts <- getDocuments(maybeProduct.map(_.getAll("product.related").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
       }).getOrElse(Nil):_*)
     } yield {
