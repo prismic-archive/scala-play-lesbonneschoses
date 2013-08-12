@@ -19,7 +19,7 @@ import io.prismic._
  */
 object Application extends Controller {
 
-  import Prismic.ctx
+  import Prismic._
 
   // -- Resolve links to documents
   def linkResolver(api: Api, ref: Option[String])(implicit request: RequestHeader) = DocumentLinkResolver(api) { 
@@ -42,38 +42,6 @@ object Application extends Controller {
     case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _)    => routes.Application.blogPost(id, slug, ref).absoluteURL()
     
     case anyOtherLink                                                   => routes.Application.brokenLink(ref).absoluteURL()
-  }
-  
-  // -- Helper: Retrieve a single document by Id
-  def getDocument(id: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
-    for {
-      documents <- ctx.api.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ctx.ref).submit()
-    } yield {
-      documents.headOption
-    }
-  }
-
-  // -- Helper: Retrieve several documents by Id
-  def getDocuments(ids: String*)(implicit ctx: Prismic.Context): Future[Seq[Document]] = {
-    ids match {
-      case Nil => Future.successful(Nil)
-      case ids => ctx.api.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ctx.ref).submit()
-    }
-  }
-
-  // -- Helper: Retrieve a single document from its bookmark
-  def getBookmark(bookmark: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
-    ctx.api.bookmarks.get(bookmark).map(id => getDocument(id)).getOrElse(Future.successful(None))
-  }
-
-  // -- Helper: Check if the slug is valid and redirect to the most recent version id needed
-  def checkSlug(document: Option[Document], slug: String)(callback: Either[String,Document] => SimpleResult)(implicit r: Prismic.Request[_]) = {
-    document.collect {
-      case document if document.slug == slug => callback(Right(document))
-      case document if document.slugs.contains(slug) => callback(Left(document.slug))
-    }.getOrElse {
-      PageNotFound
-    }
   }
 
   // -- Page not found

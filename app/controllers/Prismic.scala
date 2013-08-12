@@ -84,6 +84,38 @@ object Prismic extends Controller {
   // -- Fetch the API entry document
   def apiHome(accessToken: Option[String] = None) = Api.get(config("prismic.api"), accessToken = accessToken, cache = Cache, logger = Logger)
 
+  // -- Helper: Retrieve a single document by Id
+  def getDocument(id: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
+    for {
+      documents <- ctx.api.forms("everything").query(s"""[[at(document.id, "$id")]]""").ref(ctx.ref).submit()
+    } yield {
+      documents.headOption
+    }
+  }
+
+  // -- Helper: Retrieve several documents by Id
+  def getDocuments(ids: String*)(implicit ctx: Prismic.Context): Future[Seq[Document]] = {
+    ids match {
+      case Nil => Future.successful(Nil)
+      case ids => ctx.api.forms("everything").query(s"""[[any(document.id, ${ids.mkString("[\"","\",\"","\"]")})]]""").ref(ctx.ref).submit()
+    }
+  }
+
+  // -- Helper: Retrieve a single document from its bookmark
+  def getBookmark(bookmark: String)(implicit ctx: Prismic.Context): Future[Option[Document]] = {
+    ctx.api.bookmarks.get(bookmark).map(id => getDocument(id)).getOrElse(Future.successful(None))
+  }
+
+  // -- Helper: Check if the slug is valid and redirect to the most recent version id needed
+  def checkSlug(document: Option[Document], slug: String)(callback: Either[String,Document] => SimpleResult)(implicit r: Prismic.Request[_]) = {
+    document.collect {
+      case document if document.slug == slug => callback(Right(document))
+      case document if document.slugs.contains(slug) => callback(Left(document.slug))
+    }.getOrElse {
+      Application.PageNotFound
+    }
+  }
+
   // --
   // -- OAuth actions
   // --
