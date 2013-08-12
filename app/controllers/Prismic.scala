@@ -56,7 +56,7 @@ object Prismic extends Controller {
     (
       for {
         api <- apiHome(request.session.get(ACCESS_TOKEN))
-        ctx = Context(api, ref.getOrElse(api.master.ref), request.session.get(ACCESS_TOKEN), Application.linkResolver(api, ref.filterNot(_ == api.master.ref))(request))
+        ctx = Context(api, ref.map(_.trim).filterNot(_.isEmpty).getOrElse(api.master.ref), request.session.get(ACCESS_TOKEN), Application.linkResolver(api, ref.filterNot(_ == api.master.ref))(request))
         result <- block(Request(request, ctx))
       } yield result
     ).recover {
