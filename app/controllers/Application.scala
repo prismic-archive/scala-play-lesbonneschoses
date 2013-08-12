@@ -147,7 +147,7 @@ object Application extends Controller {
   def blog(maybeCategory: Option[String], ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
       posts <- maybeCategory.map(
-        category => ctx.api.forms("blog").query(s"""[[at(my.blog-post.category, "$category")]]""")
+        category => ctx.api.forms("blog").query(s"""[[:d = at(my.blog-post.category, "$category")]]""")
       ).getOrElse(ctx.api.forms("blog")).ref(ctx.ref).submit()
     } yield {
       Ok(views.html.posts(posts.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
@@ -203,7 +203,7 @@ object Application extends Controller {
 
   def productsByFlavour(flavour: String, ref: Option[String]) = Prismic.action(ref) { implicit request =>
     for {
-      products <- ctx.api.forms("everything").query(s"""[[at(my.product.flavour, "$flavour")]]""").ref(ctx.ref).submit()
+      products <- ctx.api.forms("everything").query(s"""[[:d = at(my.product.flavour, "$flavour")]]""").ref(ctx.ref).submit()
     } yield {
       if(products.isEmpty) {
         PageNotFound
@@ -218,8 +218,8 @@ object Application extends Controller {
   def search(query: Option[String], ref: Option[String]) = Prismic.action(ref) { implicit request =>
     query.map(_.trim).filterNot(_.isEmpty).map { q =>
       for {
-        products <- ctx.api.forms("everything").query(s"""[[any(document.type, ["product", "selection"])][fulltext(document, "$q")]]""").ref(ctx.ref).submit()
-        others <- ctx.api.forms("everything").query(s"""[[any(document.type, ["article", "blog-post", "job-offer", "store"])][fulltext(document, "$q")]]""").ref(ctx.ref).submit()
+        products <- ctx.api.forms("everything").query(s"""[[:d = any(document.type, ["product", "selection"])][:d = fulltext(document, "$q")]]""").ref(ctx.ref).submit()
+        others <- ctx.api.forms("everything").query(s"""[[:d = any(document.type, ["article", "blog-post", "job-offer", "store"])][:d = fulltext(document, "$q")]]""").ref(ctx.ref).submit()
       } yield {
         Ok(views.html.search(query, products, others))
       }
