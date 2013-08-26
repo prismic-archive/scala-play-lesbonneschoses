@@ -22,7 +22,7 @@
     @List("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday").map { day =>
       <dl>
         <dt>@day</dt>
-        <dd>@store.getText(s"store.${day.toLowerCase}[0]")</dd>
+        <dd>@store.getText(s"store.${day.toLowerCase}")</dd>
       </dl>
     }
 

@@ -20,7 +20,7 @@
       @product.getHtml("product.description", ctx.linkResolver).map(Html.apply)
 
       <p>
-        <a @product.getText("product.flavour[0]").map { flavour => href="@routes.Application.productsByFlavour(flavour, ref = ctx.maybeRef)"}>
+        <a @product.getText("product.flavour").map { flavour => href="@routes.Application.productsByFlavour(flavour, ref = ctx.maybeRef)"}>
           <strong class="color" style="background: @product.getText("product.color")">@product.getText("product.color")</strong>
         </a>
       </p>
@@ -38,8 +38,8 @@
   }.getOrElse {
 
     @for(
-      author <- product.getText("product.testimonial_author[0]");
-      quote <- product.getText("product.testimonial_quote[0]")
+      author <- product.getText("product.testimonial_author");
+      quote <- product.getText("product.testimonial_quote")
     ) {
       <section id="quote">
         <blockquote>@quote <strong>said @author</strong></blockquote>
