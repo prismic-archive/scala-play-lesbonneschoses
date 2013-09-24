@@ -385,10 +385,12 @@ html.no-js #home #caroussel .products ul {
 
 #home #caroussel .products ul li {
   -webkit-transform: translateX(1440px);
+  transform: translateX(1440px);
 }
 
 html.no-js #home #caroussel .products ul li  {
   -webkit-transform: none;
+  transform: none;
 }
 
 .products ul li img {
@@ -440,6 +442,7 @@ html.no-js #home #caroussel .products ul li  {
 
 .products ul li:hover img {
   -webkit-transform: translateY(-20px);
+  transform: translateY(-20px);
 }
 
 #home #caroussel .products ul:empty::before {
@@ -657,7 +660,7 @@ html.no-js #home #caroussel .products ul li  {
 }
 
 /* ==========================================================================
-   Caroussel Animation
+   Caroussel Animation (Webkit)
    ========================================================================== */
 
 #home #caroussel .products ul:first-child li,
@@ -759,6 +762,111 @@ html.no-js #home #caroussel .products ul li {
 @-webkit-keyframes moveToLeft {
   0% { -webkit-transform: translateX(0); }
   100% { -webkit-transform: translateX(-1440px); }
+}
+
+/* ==========================================================================
+   Caroussel Animation (Standard)
+   ========================================================================== */
+
+#home #caroussel .products ul:first-child li,
+html.no-js #home #caroussel .products ul li {
+  animation: scaleUp 500ms ease-in-out both;
+}
+ 
+@keyframes scaleUp {
+  0% { transform: translateX(0); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+#home #caroussel .products ul:first-child li:first-child {
+  animation-delay: 90ms;
+}
+ 
+#home #caroussel .products ul:first-child li:nth-child(2) {
+  animation-delay: 180ms;
+}
+ 
+#home #caroussel .products ul:first-child li:nth-child(3) {
+  animation-delay: 270ms;
+}
+ 
+#home #caroussel .products ul:first-child li:nth-child(4) {
+  animation-delay: 360ms;
+}
+
+#home #caroussel .products ul:first-child li:nth-child(5) {
+  animation-delay: 450ms;
+}
+
+#home #caroussel .products ul.moveFromRight li {
+  animation: moveFromRight 350ms ease-in-out both;
+}
+ 
+#home #caroussel .products ul.moveFromLeft li {
+  animation: moveFromLeft 350ms ease-in-out both;
+}
+ 
+#home #caroussel .products ul.moveToRight li {
+  animation: moveToRight 350ms ease-in-out both;
+}
+ 
+#home #caroussel .products ul.moveToLeft li {
+  animation: moveToLeft 350ms ease-in-out both;
+}
+
+#home #caroussel .products ul.moveToLeft li:first-child,
+#home #caroussel .products ul.moveFromRight li:first-child,
+#home #caroussel .products ul.moveToRight li:nth-child(5),
+#home #caroussel .products ul.moveFromLeft li:nth-child(5) {
+  animation-delay: 0ms;
+}
+
+#home #caroussel .products ul.moveToLeft li:nth-child(2),
+#home #caroussel .products ul.moveFromRight li:nth-child(2),
+#home #caroussel .products ul.moveToRight li:nth-child(4),
+#home #caroussel .products ul.moveFromLeft li:nth-child(4) {
+  animation-delay: 90ms;
+}
+ 
+#home #caroussel .products ul.moveToLeft li:nth-child(3),
+#home #caroussel .products ul.moveFromRight li:nth-child(3),
+#home #caroussel .products ul.moveToRight li:nth-child(3),
+#home #caroussel .products ul.moveFromLeft li:nth-child(3) {
+  animation-delay: 180ms;
+}
+ 
+#home #caroussel .products ul.moveToLeft li:nth-child(4),
+#home #caroussel .products ul.moveFromRight li:nth-child(4),
+#home #caroussel .products ul.moveToRight li:nth-child(2),
+#home #caroussel .products ul.moveFromLeft li:nth-child(2)  {
+  animation-delay: 270ms;
+}
+
+#home #caroussel .products ul.moveToLeft li:nth-child(5),
+#home #caroussel .products ul.moveFromRight li:nth-child(5),
+#home #caroussel .products ul.moveToRight li:first-child,
+#home #caroussel .products ul.moveFromLeft li:first-child  {
+  animation-delay: 350ms;
+}
+
+@keyframes moveFromRight {
+  0% { transform: translateX(1440px); }
+  100% { transform: translateX(0); }
+}
+ 
+@keyframes moveFromLeft {
+  0% { transform: translateX(-1440px); }
+  100% { transform: translateX(0); }
+}
+ 
+@keyframes moveToRight {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(1440px); }
+}
+ 
+@keyframes moveToLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-1440px); }
 }
 
 /* ==========================================================================
@@ -1468,6 +1576,7 @@ html.no-js #home #caroussel .products ul li {
 
 #search #product-results li img {
   -webkit-transform: none !important;
+  transform: none !important;
   width: 100px !important;
   height: 100px !important;
 }
@@ -1607,10 +1716,9 @@ div.main.fade > section:not(:first-child)  {
 }
 
 @media print,
-       (-o-min-device-pixel-ratio: 5/4),
-       (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 120dpi) {
-
+   (-o-min-device-pixel-ratio: 5/4),
+   (-webkit-min-device-pixel-ratio: 1.25),
+   (min-resolution: 120dpi) {
 }
 
 /* ==========================================================================

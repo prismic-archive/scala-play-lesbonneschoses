@@ -12,8 +12,8 @@ object ApplicationBuild extends Build {
     // Prismic.io Maven repository
     resolvers += "Prismic.io kits" at "https://github.com/prismicio/repository/raw/master/maven/",
 
-    // The Java kit
-    libraryDependencies += "io.prismic" %% "scala-kit" % "1.0-SNAPSHOT"
+    // The Scala kit
+    libraryDependencies += "io.prismic" %% "scala-kit" % "1.0-M2"
   )
 
 }
