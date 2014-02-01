@@ -1,8 +1,20 @@
 ## Les Bonnes Choses, Play with Scala
 
-This is a example project made by the prismic.io team as a showcase to help developers get started. It consumes the content repository available at [https://lesbonneschoses.prismic.io/api](https://lesbonneschoses.prismic.io/api).
+This is a example project made by the prismic.io team as a showcase to help developers get started. By default, it consumes the content repository available at [https://lesbonneschoses.prismic.io/api](https://lesbonneschoses.prismic.io/api).
 
 You can also visit the public version hosted at [http://lesbonneschoses.prismic.me](http://lesbonneschoses.prismic.me).
+
+### Get started
+
+This project gets started and installed exactly like the Play with Scala starter project, you will find all information [in its README file](https://github.com/prismicio/scala-play-starter/blob/master/README.md).
+
+#### Connect it to your own Les Bonnes Choses repository
+
+First, create your own Les Bonnes Choses content repository if you haven't: from your [prismic.io dashboard](https://prismic.io/dashboard/), click on the "Fork it now!" button in the "Fork the Les Bonnes Choses repository" frame.
+
+Then, configure the project as described in the "Configure" paragraph of [the starter project's README file](https://github.com/prismicio/scala-play-starter/blob/master/README.md).
+
+Now, you can change content in your Les Bonnes Choses repository, and it will reflect in your local project.
 
 ### Licence
 
