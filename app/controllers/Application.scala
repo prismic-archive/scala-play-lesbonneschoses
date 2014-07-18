@@ -5,8 +5,8 @@ import play.api.mvc._
 
 import org.joda.time._
 
-import scala.concurrent._
 import play.api.libs.concurrent.Execution.Implicits._
+import scala.concurrent._
 
 import Play.current
 
@@ -22,26 +22,26 @@ object Application extends Controller {
   import Prismic._
 
   // -- Resolve links to documents
-  def linkResolver(api: Api, ref: Option[String])(implicit request: RequestHeader) = DocumentLinkResolver(api) { 
+  def linkResolver(api: Api, ref: Option[String])(implicit request: RequestHeader) = DocumentLinkResolver(api) {
 
     // For "Bookmarked" documents that use a special page
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("about"))          => routes.Application.about(ref).absoluteURL()
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("jobs"))           => routes.Application.jobs(ref).absoluteURL()
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("stores"))         => routes.Application.stores(ref).absoluteURL()
-    
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("about")) => routes.Application.about(ref).absoluteURL()
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("jobs")) => routes.Application.jobs(ref).absoluteURL()
+    case (Fragment.DocumentLink(_, _, _, _, _), Some("stores")) => routes.Application.stores(ref).absoluteURL()
+
     // Store documents
-    case (Fragment.DocumentLink(id, "store", _, slug, false), _)        => routes.Application.storeDetail(id, slug, ref).absoluteURL()
-    
+    case (Fragment.DocumentLink(id, "store", _, slug, false), _) => routes.Application.storeDetail(id, slug, ref).absoluteURL()
+
     // Any product
-    case (Fragment.DocumentLink(id, "product", _, slug, false), _)      => routes.Application.productDetail(id, slug, ref).absoluteURL()
-    
+    case (Fragment.DocumentLink(id, "product", _, slug, false), _) => routes.Application.productDetail(id, slug, ref).absoluteURL()
+
     // Job offers
-    case (Fragment.DocumentLink(id, "job-offer", _, slug, false), _)    => routes.Application.jobDetail(id, slug, ref).absoluteURL()
-    
+    case (Fragment.DocumentLink(id, "job-offer", _, slug, false), _) => routes.Application.jobDetail(id, slug, ref).absoluteURL()
+
     // Blog
-    case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _)    => routes.Application.blogPost(id, slug, ref).absoluteURL()
-    
-    case anyOtherLink                                                   => routes.Application.brokenLink(ref).absoluteURL()
+    case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _) => routes.Application.blogPost(id, slug, ref).absoluteURL()
+
+    case anyOtherLink => routes.Application.brokenLink(ref).absoluteURL()
   }
 
   // -- Page not found
@@ -59,7 +59,7 @@ object Application extends Controller {
       products <- ctx.api.forms("products").ref(ctx.ref).submit()
       featured <- ctx.api.forms("featured").ref(ctx.ref).submit()
     } yield {
-      Ok(views.html.index(products, featured))
+      Ok(views.html.index(products.results, featured.results))
     }
   }
 
@@ -80,7 +80,7 @@ object Application extends Controller {
       maybePage <- getBookmark("jobs")
       jobs <- ctx.api.forms("jobs").ref(ctx.ref).submit()
     } yield {
-      maybePage.map(page => Ok(views.html.jobs(page, jobs))).getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.jobs(page, jobs.results))).getOrElse(PageNotFound)
     }
   }
 
@@ -89,7 +89,7 @@ object Application extends Controller {
       maybePage <- getBookmark("jobs")
       maybeJob <- getDocument(id)
     } yield {
-      checkSlug(maybeJob, slug) { 
+      checkSlug(maybeJob, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.jobDetail(id, newSlug).url)
         case Right(job) => maybePage.map { page =>
           Ok(views.html.jobDetail(page, job))
@@ -105,7 +105,7 @@ object Application extends Controller {
       maybePage <- getBookmark("stores")
       stores <- ctx.api.forms("stores").ref(ctx.ref).submit()
     } yield {
-      maybePage.map(page => Ok(views.html.stores(page, stores))).getOrElse(PageNotFound)
+      maybePage.map(page => Ok(views.html.stores(page, stores.results))).getOrElse(PageNotFound)
     }
   }
 
@@ -115,7 +115,7 @@ object Application extends Controller {
     } yield {
       checkSlug(maybeStore, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.storeDetail(id, newSlug).url)
-        case Right(store) => Ok(views.html.storeDetail(store))
+        case Right(store)  => Ok(views.html.storeDetail(store))
       }
     }
   }
@@ -127,10 +127,10 @@ object Application extends Controller {
       maybeSelection <- getDocument(id)
       products <- getDocuments(maybeSelection.map(_.getAll("selection.product").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
-      }).getOrElse(Nil):_*)
+      }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybeSelection, slug) {
-        case Left(newSlug) => MovedPermanently(routes.Application.selectionDetail(id, newSlug).url)
+        case Left(newSlug)    => MovedPermanently(routes.Application.selectionDetail(id, newSlug).url)
         case Right(selection) => Ok(views.html.selectionDetail(selection, products))
       }
     }
@@ -139,9 +139,9 @@ object Application extends Controller {
   // -- Blog
 
   val BlogCategories = List(
-     "Announcements", 
-     "Do it yourself", 
-     "Behind the scenes"
+    "Announcements",
+    "Do it yourself",
+    "Behind the scenes"
   )
 
   def blog(maybeCategory: Option[String], ref: Option[String]) = Prismic.action(ref) { implicit request =>
@@ -150,7 +150,7 @@ object Application extends Controller {
         category => ctx.api.forms("blog").query(s"""[[:d = at(my.blog-post.category, "$category")]]""")
       ).getOrElse(ctx.api.forms("blog")).ref(ctx.ref).submit()
     } yield {
-      Ok(views.html.posts(posts.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
+      Ok(views.html.posts(posts.results.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
     }
   }
 
@@ -159,14 +159,14 @@ object Application extends Controller {
       maybePost <- getDocument(id)
       relatedProducts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedproduct").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
-      }).getOrElse(Nil):_*)
+      }).getOrElse(Nil): _*)
       relatedPosts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedpost").collect {
         case Fragment.DocumentLink(id, "blog-post", _, _, false) => id
-      }).getOrElse(Nil):_*)
+      }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybePost, slug) {
         case Left(newSlug) => MovedPermanently(routes.Application.blogPost(id, newSlug).url)
-        case Right(post) => Ok(views.html.postDetail(post, relatedProducts, relatedPosts))        
+        case Right(post)   => Ok(views.html.postDetail(post, relatedProducts, relatedPosts))
       }
     }
   }
@@ -183,7 +183,7 @@ object Application extends Controller {
     for {
       products <- ctx.api.forms("products").ref(ctx.ref).submit()
     } yield {
-      Ok(views.html.products(products))
+      Ok(views.html.products(products.results))
     }
   }
 
@@ -192,10 +192,10 @@ object Application extends Controller {
       maybeProduct <- getDocument(id)
       relatedProducts <- getDocuments(maybeProduct.map(_.getAll("product.related").collect {
         case Fragment.DocumentLink(id, "product", _, _, false) => id
-      }).getOrElse(Nil):_*)
+      }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybeProduct, slug) {
-        case Left(newSlug) => MovedPermanently(routes.Application.productDetail(id, newSlug).url)
+        case Left(newSlug)  => MovedPermanently(routes.Application.productDetail(id, newSlug).url)
         case Right(product) => Ok(views.html.productDetail(product, relatedProducts))
       }
     }
@@ -205,10 +205,11 @@ object Application extends Controller {
     for {
       products <- ctx.api.forms("everything").query(s"""[[:d = at(my.product.flavour, "$flavour")]]""").ref(ctx.ref).submit()
     } yield {
-      if(products.isEmpty) {
+      if (products.results.isEmpty) {
         PageNotFound
-      } else {
-        Ok(views.html.productsByFlavour(flavour, products))
+      }
+      else {
+        Ok(views.html.productsByFlavour(flavour, products.results))
       }
     }
   }
@@ -221,7 +222,7 @@ object Application extends Controller {
         products <- ctx.api.forms("everything").query(s"""[[:d = any(document.type, ["product", "selection"])][:d = fulltext(document, "$q")]]""").ref(ctx.ref).submit()
         others <- ctx.api.forms("everything").query(s"""[[:d = any(document.type, ["article", "blog-post", "job-offer", "store"])][:d = fulltext(document, "$q")]]""").ref(ctx.ref).submit()
       } yield {
-        Ok(views.html.search(query, products, others))
+        Ok(views.html.search(query, products.results, others.results))
       }
     }.getOrElse {
       Future.successful(Ok(views.html.search()))
