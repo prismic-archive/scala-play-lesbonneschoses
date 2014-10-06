@@ -150,7 +150,7 @@ object Application extends Controller {
         category => ctx.api.forms("blog").query(s"""[[:d = at(my.blog-post.category, "$category")]]""")
       ).getOrElse(ctx.api.forms("blog")).ref(ctx.ref).submit()
     } yield {
-      Ok(views.html.posts(posts.results.sortBy(_.getDate("blog-post.date").map(_.value.getMillis)).reverse))
+      Ok(views.html.posts(posts.results.sortBy(_.getDate("blog-post.date").map(_.value.toDateTime(new LocalTime()).getMillis)).reverse))
     }
   }
 
@@ -228,5 +228,4 @@ object Application extends Controller {
       Future.successful(Ok(views.html.search()))
     }
   }
-
 }

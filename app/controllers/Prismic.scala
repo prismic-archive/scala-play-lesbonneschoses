@@ -49,10 +49,16 @@ object Prismic extends Controller {
   private def callbackUrl(implicit rh: RequestHeader) = routes.Prismic.callback(code = None, redirect_uri = rh.headers.get("referer")).absoluteURL()
 
   // -- Define a `Prismic request` that contain both the original request and the Prismic call context
-  case class Request[A](request: play.api.mvc.Request[A], ctx: Context) extends WrappedRequest(request)
+  case class Request[A](
+    request: play.api.mvc.Request[A],
+    ctx: Context) extends WrappedRequest(request)
 
   // -- A Prismic context that help to keep the reference to useful primisc.io contextual data
-  case class Context(api: Api, ref: String, accessToken: Option[String], linkResolver: DocumentLinkResolver) {
+  case class Context(
+      api: Api,
+      ref: String,
+      accessToken: Option[String],
+      linkResolver: DocumentLinkResolver) {
     def maybeRef = Option(ref).filterNot(_ == api.master.ref)
     def hasPrivilegedAccess = accessToken.isDefined
   }
@@ -62,10 +68,20 @@ object Prismic extends Controller {
   }
 
   // -- Build a Prismic context
-  def buildContext(ref: Option[String])(implicit request: RequestHeader) =
+  def buildContext(queryRef: Option[String])(implicit request: RequestHeader) = {
     apiHome(request.session.get(ACCESS_TOKEN).orElse(Play.configuration.getString("prismic.token"))) map { api =>
-      Context(api, ref.map(_.trim).filterNot(_.isEmpty).getOrElse(api.master.ref), request.session.get(ACCESS_TOKEN), Application.linkResolver(api, ref.filterNot(_ == api.master.ref))(request))
+      val ref = queryRef orElse {
+        request.cookies.get(Experiment.cookieName) map
+          (_.value.trim) filter
+          (_.nonEmpty) flatMap
+          parseIntOption flatMap { variationId =>
+            api.experiments.current flatMap
+              (_.variations lift variationId) map (_.ref)
+          }
+      } getOrElse api.master.ref
+      Context(api, ref, request.session.get(ACCESS_TOKEN), Application.linkResolver(api, Some(ref).filter(api.master.ref !=))(request))
     }
+  }
 
   // -- Action builder
   def bodyAction[A](bodyParser: BodyParser[A])(ref: Option[String] = None)(block: Prismic.Request[A] => Future[Result]) = Action.async(bodyParser) { implicit request =>
@@ -99,11 +115,12 @@ object Prismic extends Controller {
   }
 
   // -- Helper: Retrieve several documents by Id
-  def getDocuments(ids: String*)(implicit ctx: Prismic.Context): Future[Seq[Document]] = {
+  def getDocuments(ids: String*)(implicit req: Prismic.Request[_]): Future[Seq[Document]] = {
     ids match {
       case Nil => Future.successful(Nil)
       case ids => ctx.api.forms("everything")
-        .query(s"""[[:d = any(document.id, ${ids.mkString("[\"", "\",\"", "\"]")})]]""").ref(ctx.ref).submit() map (_.results)
+        .query(s"""[[:d = any(document.id, ${ids.mkString("[\"", "\",\"", "\"]")})]]""")
+        .ref(ctx.ref).submit() map (_.results)
     }
   }
 
@@ -163,4 +180,10 @@ object Prismic extends Controller {
       }
   }
 
+  def parseIntOption(str: String): Option[Int] = try {
+    Some(java.lang.Integer.parseInt(str))
+  }
+  catch {
+    case e: NumberFormatException => None
+  }
 }
