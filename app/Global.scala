@@ -10,7 +10,7 @@ import controllers._
 object Global extends GlobalSettings {
 
   override def onHandlerNotFound(request: RequestHeader) = {
-    Prismic.buildContext(request.queryString.get("ref").flatMap(_.headOption))(request).map { api =>
+    Prismic.buildContext(request).map { api =>
       Application.PageNotFound(api)
     }
   }

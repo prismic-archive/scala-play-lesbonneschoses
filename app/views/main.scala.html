@@ -13,28 +13,24 @@
 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/normalize.min.css")">
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/toolbar.css")">
 
     <script src="@routes.Assets.at("javascripts/modernizr-2.6.2.min.js")"></script>
   </head>
-  <body @if(ctx.hasPrivilegedAccess) { class="toolbar" }>
-
-    @toolbar()
-
+  <body>
     <header>
       <nav>
-        <h1><a href="@routes.Application.index(ref = ctx.maybeRef)">Les bonnes choses</a></h1>
+        <h1><a href="@routes.Application.index">Les bonnes choses</a></h1>
 
         <ul>
-          <li><a href="@routes.Application.about(ref = ctx.maybeRef)" @if(id == "about") { class="selected" }>About</a></li>
-          <li><a href="@routes.Application.stores(ref = ctx.maybeRef)" @if(id == "stores" || id == "store") { class="selected" }>Stores</a></li>
+          <li><a href="@routes.Application.about" @if(id == "about") { class="selected" }>About</a></li>
+          <li><a href="@routes.Application.stores" @if(id == "stores" || id == "store") { class="selected" }>Stores</a></li>
         </ul>
         <ul>
-          <li><a href="@routes.Application.jobs(ref = ctx.maybeRef)" @if(id == "jobs" || id == "job") { class="selected" }>Jobs</a></li>
-          <li><a href="@routes.Application.blog(ref = ctx.maybeRef)" @if(id == "blog") { class="selected" } target="_self">Our Blog</a></li>
+          <li><a href="@routes.Application.jobs" @if(id == "jobs" || id == "job") { class="selected" }>Jobs</a></li>
+          <li><a href="@routes.Application.blog()" @if(id == "blog") { class="selected" } target="_self">Our Blog</a></li>
         </ul>
 
-        <a href="@routes.Application.search(ref = ctx.maybeRef)"><span>Search</span></a>
+        <a href="@routes.Application.search()"><span>Search</span></a>
 
       </nav>
     </header>
@@ -51,5 +47,7 @@
 
     <script src="@routes.Assets.at("javascripts/catslider.js")"></script>
     <script src="@routes.Assets.at("javascripts/main.js")"></script>
+
+    <script src="https://static.cdn.wroom.io/prismic.js"></script>
   </body>
 </html>

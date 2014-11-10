@@ -10,7 +10,7 @@
   @stores.sortBy(_.getText("store.name").getOrElse("")).map { store => 
  
     <article class="store" style="@store.getImage("store.image", "medium").map { img => background-image: url(@img.url) }">
-      <a href="@routes.Application.storeDetail(store.id, store.slug, ref = ctx.maybeRef)"><h3>@store.getText("store.name")</h3></a>
+      <a href="@routes.Application.storeDetail(store.id, store.slug)"><h3>@store.getText("store.name")</h3></a>
     </article>
 
   }

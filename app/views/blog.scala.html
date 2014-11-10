@@ -13,25 +13,21 @@
 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/normalize.min.css")">
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/blog.css")">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/toolbar.css")">
 
     <script src="@routes.Assets.at("javascripts/modernizr-2.6.2.min.js")"></script>
   </head>
-  <body @if(ctx.hasPrivilegedAccess) { class="toolbar" }>
-
-    @toolbar()
-
+  <body>
     <header>
 
-      <a href="@routes.Application.index(ref = ctx.maybeRef)">
+      <a href="@routes.Application.index">
         <h1>Les Bonnes Choses</h1>
       </a>
 
       <nav>
         <ul>
-          <li><a href="@routes.Application.blog(ref = ctx.maybeRef)">Home</a></li>
+          <li><a href="@routes.Application.blog()">Home</a></li>
           @Application.BlogCategories.map { category =>
-            <li><a href="@routes.Application.blog(Some(category), ref = ctx.maybeRef)">@category</a></li>
+            <li><a href="@routes.Application.blog(Some(category))">@category</a></li>
           }
         </ul>
       </nav>
@@ -46,5 +42,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/jquery-1.10.1.min.js")"><\/script>')</script>
+
+    <script src="https://static.cdn.wroom.io/prismic.min.js"></script>
   </body>
 </html>

@@ -26,7 +26,7 @@
       <div class="listing">
       @jobs.map { job =>
         <div class="job">
-          <a href="@routes.Application.jobDetail(job.id, job.slug, ref = ctx.maybeRef)">
+          <a href="@routes.Application.jobDetail(job.id, job.slug)">
             <h3>@job.getText("job-offer.name")</h3>
             <p>
               @job.getStructuredText("job-offer.profile").flatMap(_.getFirstParagraph).map(_.text)
