@@ -32,10 +32,9 @@ object Prismic extends Controller {
 
   // -- Write debug and error messages to the Play `prismic` logger (check the configuration in application.conf)
   private val Logger = (level: Symbol, message: String) => level match {
-    case _ => println(level, message)
-    // case 'DEBUG => play.api.Logger("prismic").debug(message)
-    // case 'ERROR => play.api.Logger("prismic").error(message)
-    // case _      => play.api.Logger("prismic").info(message)
+    case 'DEBUG => play.api.Logger("prismic").debug(message)
+    case 'ERROR => play.api.Logger("prismic").error(message)
+    case _      => play.api.Logger("prismic").info(message)
   }
 
   // Helper method to read the Play application configuration
@@ -60,10 +59,10 @@ object Prismic extends Controller {
     apiHome(maybeAccessToken) map { api =>
       val ref = { 
         // First check if there is a preview token in a cookie
-        request.cookies.get(io.prismic.Cookies.preview).map(_.value)
+        request.cookies.get(io.prismic.Prismic.previewCookie).map(_.value)
       }.orElse {
         // Otherwise check if user must see a specific experiment variation
-        request.cookies.get(io.prismic.Cookies.experiments).map(_.value).flatMap(api.experiments.refFromCookie)
+        request.cookies.get(io.prismic.Prismic.experimentsCookie).map(_.value).flatMap(api.experiments.refFromCookie)
       }.getOrElse {
         // Otherwise use the master ref 
         api.master.ref
@@ -80,8 +79,9 @@ object Prismic extends Controller {
         result <- block(Request(request, ctx))
       } yield result
     ).recover {
-        case _: InvalidToken        => ???
-        case _: AuthorizationNeeded => ???
+        case e: ApiError => InternalServerError(e.getMessage).discardingCookies(
+          DiscardingCookie(name = io.prismic.Prismic.previewCookie, path = "/")
+        )
       }
   }
 
@@ -130,7 +130,7 @@ object Prismic extends Controller {
   // -- Preview Action
   def preview(token: String) = Prismic.action { implicit req =>
     ctx.api.previewSession(token, ctx.linkResolver, routes.Application.index.url).map { redirectUrl =>
-      Redirect(redirectUrl).withCookies(Cookie(io.prismic.Cookies.preview, token, path = "/", maxAge = Some(30 * 60 * 1000), httpOnly = false))
+      Redirect(redirectUrl).withCookies(Cookie(io.prismic.Prismic.previewCookie, token, path = "/", maxAge = Some(30 * 60 * 1000), httpOnly = false))
     }
   }
 
