@@ -130,7 +130,7 @@ object Prismic extends Controller {
   // -- Preview Action
   def preview(token: String) = Prismic.action { implicit req =>
     ctx.api.previewSession(token, ctx.linkResolver, routes.Application.index.url).map { redirectUrl =>
-      Redirect(redirectUrl).withCookies(Cookie(io.prismic.Prismic.previewCookie, token, path = "/", maxAge = Some(30 * 60 * 1000), httpOnly = false))
+      Redirect(redirectUrl).withCookies(Cookie(io.prismic.Prismic.previewCookie, token, path = "/", maxAge = Some(30 * 60), httpOnly = false))
     }
   }
 
