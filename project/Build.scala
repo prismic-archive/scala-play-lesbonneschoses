@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     scalaVersion := "2.11.1",
 
     // The Scala kit
-    libraryDependencies += "io.prismic" %% "scala-kit" % "1.2.9"
+    libraryDependencies += "io.prismic" %% "scala-kit" % "1.2.12"
   )
 
 }
