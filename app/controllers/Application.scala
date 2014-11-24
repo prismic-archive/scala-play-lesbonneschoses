@@ -150,8 +150,8 @@ object Application extends Controller {
   def blog(maybeCategory: Option[String]) = Prismic.action { implicit request =>
     for {
       posts <- maybeCategory.map(
-        category => ctx.api.forms("blog").query(s"""[[:d = at(my.blog-post.category, "$category")]]""").orderings("[blog-post.date ASC]")
-      ).getOrElse(ctx.api.forms("blog")).ref(ctx.ref).submit()
+        category => ctx.api.forms("blog").query(s"""[[:d = at(my.blog-post.category, "$category")]]""").orderings("[my.blog-post.date desc]")
+      ).getOrElse(ctx.api.forms("blog").orderings("[my.blog-post.date desc]")).ref(ctx.ref).submit()
     } yield {
       Ok(views.html.posts(posts.results))
     }
