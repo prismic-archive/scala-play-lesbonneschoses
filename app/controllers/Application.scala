@@ -25,24 +25,29 @@ object Application extends Controller {
   def linkResolver(api: Api)(implicit request: RequestHeader) = DocumentLinkResolver(api) {
 
     // For "Bookmarked" documents that use a special page
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("about")) => routes.Application.about.absoluteURL()
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("jobs")) => routes.Application.jobs.absoluteURL()
-    case (Fragment.DocumentLink(_, _, _, _, _), Some("stores")) => routes.Application.stores.absoluteURL()
+    case (_, Some("about")) => routes.Application.about.absoluteURL()
+    case (_, Some("jobs")) => routes.Application.jobs.absoluteURL()
+    case (_, Some("stores")) => routes.Application.stores.absoluteURL()
 
     // Store documents
-    case (Fragment.DocumentLink(id, "store", _, slug, false), _) => routes.Application.storeDetail(id, slug).absoluteURL()
+    case (link:Fragment.DocumentLink, _) if link.typ == "store" && !link.isBroken =>
+      routes.Application.storeDetail(link.id, link.slug).absoluteURL()
 
     // Any product
-    case (Fragment.DocumentLink(id, "product", _, slug, false), _) => routes.Application.productDetail(id, slug).absoluteURL()
+    case (link:Fragment.DocumentLink, _) if link.typ == "product" && !link.isBroken =>
+      routes.Application.productDetail(link.id, link.slug).absoluteURL()
 
     // Product selection
-    case (Fragment.DocumentLink(id, "selection", _, slug, false), _) => routes.Application.selectionDetail(id, slug).absoluteURL()
+    case (link:Fragment.DocumentLink, _) if link.typ == "selection" && !link.isBroken =>
+      routes.Application.selectionDetail(link.id, link.slug).absoluteURL()
 
     // Job offers
-    case (Fragment.DocumentLink(id, "job-offer", _, slug, false), _) => routes.Application.jobDetail(id, slug).absoluteURL()
+    case (link:Fragment.DocumentLink, _) if link.typ == "job-offer" && !link.isBroken =>
+      routes.Application.jobDetail(link.id, link.slug).absoluteURL()
 
     // Blog
-    case (Fragment.DocumentLink(id, "blog-post", _, slug, false), _) => routes.Application.blogPost(id, slug).absoluteURL()
+    case (link:Fragment.DocumentLink, _) if link.typ == "blog-post" && !link.isBroken =>
+      routes.Application.blogPost(link.id, link.slug).absoluteURL()
 
     case anyOtherLink => routes.Application.brokenLink.absoluteURL()
   }
@@ -129,7 +134,7 @@ object Application extends Controller {
     for {
       maybeSelection <- getDocument(id)
       products <- getDocuments(maybeSelection.map(_.getAll("selection.product").collect {
-        case Fragment.DocumentLink(id, "product", _, _, false) => id
+        case link:Fragment.DocumentLink if link.typ == "product" && !link.isBroken => link.id
       }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybeSelection, slug) {
@@ -161,10 +166,10 @@ object Application extends Controller {
     for {
       maybePost <- getDocument(id)
       relatedProducts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedproduct").collect {
-        case Fragment.DocumentLink(id, "product", _, _, false) => id
+        case link:Fragment.DocumentLink if link.typ == "product" && !link.isBroken => link.id
       }).getOrElse(Nil): _*)
       relatedPosts <- getDocuments(maybePost.map(_.getAll("blog-post.relatedpost").collect {
-        case Fragment.DocumentLink(id, "blog-post", _, _, false) => id
+        case link:Fragment.DocumentLink if link.typ == "blog-post" && !link.isBroken => link.id
       }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybePost, slug) {
@@ -194,7 +199,7 @@ object Application extends Controller {
     for {
       maybeProduct <- getDocument(id)
       relatedProducts <- getDocuments(maybeProduct.map(_.getAll("product.related").collect {
-        case Fragment.DocumentLink(id, "product", _, _, false) => id
+        case link:Fragment.DocumentLink if link.typ == "product" && !link.isBroken => link.id
       }).getOrElse(Nil): _*)
     } yield {
       checkSlug(maybeProduct, slug) {
