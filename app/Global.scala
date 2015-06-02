@@ -1,4 +1,4 @@
-import play.api._
+import play.api.GlobalSettings
 import play.api.mvc._
 
 import scala.concurrent._
